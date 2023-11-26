@@ -1,10 +1,13 @@
 package nl.saxion.Models;
 
 import java.util.ArrayList;
+//FIXME Uncommunicative name of the class as the naming conventions of the naming are not met
 
 /* Printer capable of printing multiple colors. */
 public class MultiColor extends StandardFDM {
     private int maxColors;
+    //Fixme isnt the absense of spool one confusing?????
+
     private Spool spool2;
     private Spool spool3;
     private Spool spool4;
@@ -20,6 +23,7 @@ public class MultiColor extends StandardFDM {
         if(spools.size() > 2) spool3 = spools.get(2);
         if(spools.size() > 3) spool4 = spools.get(3);
     }
+    //FIXME the value of spools is hardcoded-magic numbers
 
     @Override
     public Spool[] getCurrentSpools() {
@@ -30,6 +34,7 @@ public class MultiColor extends StandardFDM {
         spools[3] = spool4;
         return spools;
     }
+//Fixme is the toString too complex???
 
     @Override
     public String toString() {
