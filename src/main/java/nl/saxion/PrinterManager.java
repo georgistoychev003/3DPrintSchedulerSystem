@@ -6,7 +6,10 @@ import org.json.simple.JSONArray;
 import java.util.*;
 
 public class PrinterManager {
-    // FIXME: create SpoolManager and PrintTaskManager
+    //FIXME: code smell // no ERROR HANDLING anywhere in the project !!!!!!!!!!!!!
+    // TODO: create SpoolManager and PrintTaskManager
+    // FIXME: code smell // class has too much functionality and the name states that is PrinterManager, however it handles prints and spools as well so different manager classes should be created for them
+    // FIXME: code smell // all lists are directly given an ArrayList variable type, this reduces flexibility so it can be substituted with List<?> / same for the hashmap
     private ArrayList<Printer> printers = new ArrayList<Printer>(); //TODO use interface
     private ArrayList<Print> prints = new ArrayList<Print>(); //TODO use interface
     private ArrayList<Spool> spools = new ArrayList<Spool>(); //TODO use interface
@@ -17,6 +20,8 @@ public class PrinterManager {
     private HashMap<Printer, PrintTask> runningPrintTasks = new HashMap();
 
     //FIXME: reduce addPrinter method args (create a class to pass or
+    // FIXME: code smell / too many arguments / method can be reduced and simplified by substituing half of the args with a Printer object which can also make the method shorter
+
     public void addPrinter(int id, int printerType, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
         if (printerType == 1) {
             StandardFDM printer = new StandardFDM(id, printerName, manufacturer, maxX, maxY, maxZ);
@@ -33,10 +38,13 @@ public class PrinterManager {
         }
     }
 
+    // FIXME: code smell??? /// naming can be more meaningful as we search the spool from the color and not a name variable that does not exist in the spool class, also list could be replaced with spools
     public boolean containsSpool(final List<Spool> list, final String name){
         return list.stream().anyMatch(o -> o.getColor().equals(name));
     }
 
+    // FIXME: code smell // method has too much functionality it should be reduced to smaller parts and also simplified / there is also a lot of code repetition going on
+    //TODO : analyze this method to find all problems/code smells
     public void selectPrintTask(Printer printer) {
         Spool[] spools = printer.getCurrentSpools();
         PrintTask chosenTask = null;
@@ -151,12 +159,14 @@ public class PrinterManager {
         }
     }
 
+    //FIXME: code smell??? // can be replaced with stream
     public void startInitialQueue() {
         for(Printer printer: printers) {
             selectPrintTask(printer);
         }
     }
 
+    //FIXME: code smell // too many arguments / all can be replaced by a Print object
     public void addPrint(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
         Print p = new Print(name, height, width, length, filamentLength, printTime);
         prints.add(p);
@@ -170,6 +180,7 @@ public class PrinterManager {
         return printers;
     }
 
+    //TODO: check if get return null if not found which means a code smell the if statement can be avoided
     public PrintTask getPrinterCurrentTask(Printer printer) {
         if(!runningPrintTasks.containsKey(printer)) {
             return null;
@@ -185,6 +196,7 @@ public class PrinterManager {
             printError("Could not find print with name " + printName);
             return;
         }
+        //FIXME: code smell??? / Can be replaced with .isEmpty()
         if (colors.size() == 0) {
             printError("Need at least one color, but none given");
             return;
@@ -209,6 +221,8 @@ public class PrinterManager {
 
     }
 
+    //FIXME: code smell // make methods that are used only within this class private
+    //FIXME: code smell??? // can be replaced with stream ( i think)
     public Print findPrint(String printName) {
         for (Print p : prints) {
             if (p.getName().equals(printName)) {
@@ -234,6 +248,7 @@ public class PrinterManager {
         return spools;
     }
 
+    //FIXME: code smell // dead code
     public Spool getSpoolByID(int id) {
         for(Spool s: spools) {
             if(s.getId() == id) {
@@ -243,6 +258,7 @@ public class PrinterManager {
         return null;
     }
 
+    //TODO: analyze this method as it looks too complicated
     public void registerPrinterFailure(int printerId) {
         Map.Entry<Printer, PrintTask> foundEntry = null;
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
@@ -269,7 +285,7 @@ public class PrinterManager {
         }
         selectPrintTask(printer);
     }
-
+    //FIXME: code smell // code repetition with the above method
     public void registerCompletion(int printerId) {
         Map.Entry<Printer, PrintTask> foundEntry = null;
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
