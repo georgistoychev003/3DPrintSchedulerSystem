@@ -60,11 +60,11 @@ public class Spool {
 
     @Override
     public String toString() {
-        return  "<--------" + System.lineSeparator() +
+        return  "--------" + System.lineSeparator() +
                 "- id: " + id + System.lineSeparator() +
                 "- color: " + color + System.lineSeparator() +
                 "- filamentType: " + filamentType + System.lineSeparator() +
                 "- length: " + length + System.lineSeparator() +
-                "-------->";
+                "--------";
     }
 }

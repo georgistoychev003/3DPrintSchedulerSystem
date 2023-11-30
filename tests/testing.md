@@ -1,30 +1,24 @@
 # Testing
 
-An attempt was made to write a reasonably comprehensive test suite to allow students to check if the program still
-works correctly. However, it quickly became apparent that this manner of black box testing results in a lot of 
-challenges to properly test it. The code is still here and some tests do in face function correctly but not everything
-could be tested.
+An attempt was made to write tests however due to the way the program was written it was very difficult to properly test things.
+As such at least a list of tests has been created detailing what should be tested. If these tests pass then the program should
+work correctly and without issue.
 
-## What is tested
+## What should be tested
 
-- StartExitProgram - Just start and exit the program
-- DisplayPrints - Display the prints checks if all prints are present regardless of order.
-- DisplayPrinters - Display the printers check if they are all present regardless of order.
-- DisplaySpools - Display the spools check they are present regardless of order.
-- AddNewPrintTask - Add a print and check it appears in the queue.
-- AddNewPrintTaskAndStartQueue - Add a print and start the queue check if the selected print fits on the printer.
-- AddMultipleNewPrintsAndStartQueue - Add multiple prints and check if the printer assignment is correct.
-
-## What is not tested
-
-- CompletePrint - Complete a print and check if it's properly remove.
-- CompletePrintStartAnother - Complete a print and assign a new print to this printer.
-- FailedPrintStartsAgain - A failed print is started again.
-- FailedPrintSpoolEmptyDifferentPrint - A failed print is added to the queue but spool is too low and a different print is selected.
+### Adding prints
+- When adding a print it should be assigned to a printer that can physically print it that has a matching spool.
+- When adding a print it should be assigned to a printer that can physically print it and a spool change is initiated.
+- When adding a print and there is no printer available that can physically print it is added to the queue.
+- When a printer is marked as ready a print is selected that fits and uses the same spool.
+- Starting the queue will attempt to fill all printers.
+- When adding multiple prints in the order of Blue, Red, Blue and a correct printer has a Blue spool. 
+  It will select the third print when it is marked ready.
+- 
 
 ## Print and Printer fit Truth table
 
-The following tables show which print fits on which printer.
+The following tables show which print can be printed by which printer.
 
 | PLA and PETG                 | Enterprise | Serenity | Red Dwarf | Heart of Gold | Tardis | Rocinante | Bebop |
 |------------------------------|------------|----------|-----------|---------------|--------|-----------|-------|

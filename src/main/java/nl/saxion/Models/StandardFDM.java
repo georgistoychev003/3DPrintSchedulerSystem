@@ -56,8 +56,8 @@ public class StandardFDM extends Printer {
         if (currentSpool != null) {
             append += "- Spool(s): " + currentSpool.getId()+ System.lineSeparator();
         }
-        append += "-------->";
-        result = result.replace("-------->", append);
+        append += "--------";
+        result = result.replace("--------", append);
         return result;
     }
 }

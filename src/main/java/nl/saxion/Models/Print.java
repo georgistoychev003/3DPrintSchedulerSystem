@@ -23,14 +23,14 @@ public class Print {
     //Fixme ??? is the lineseparator a good use case
     @Override
     public String toString() {
-        return "<--------" + System.lineSeparator() +
+        return "--------" + System.lineSeparator() +
                 "- Name: " + name + System.lineSeparator() +
                 "- Height: " + height + System.lineSeparator() +
                 "- Width: " + width + System.lineSeparator() +
                 "- Length: " + length + System.lineSeparator() +
                 "- FilamentLength: " + filamentLength + System.lineSeparator() +
                 "- Print Time: " + printTime + System.lineSeparator() +
-                "-------->";
+                "--------";
     }
     //Fixme those methods are never used so remove them- dead code
     public String getName() {

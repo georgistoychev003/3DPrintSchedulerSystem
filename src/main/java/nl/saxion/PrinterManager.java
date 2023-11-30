@@ -10,14 +10,14 @@ public class PrinterManager {
     // TODO: create SpoolManager and PrintTaskManager
     // FIXME: code smell // class has too much functionality and the name states that is PrinterManager, however it handles prints and spools as well so different manager classes should be created for them
     // FIXME: code smell // all lists are directly given an ArrayList variable type, this reduces flexibility so it can be substituted with List<?> / same for the hashmap
-    private ArrayList<Printer> printers = new ArrayList<Printer>(); //TODO use interface
-    private ArrayList<Print> prints = new ArrayList<Print>(); //TODO use interface
-    private ArrayList<Spool> spools = new ArrayList<Spool>(); //TODO use interface
+    private List<Printer> printers = new ArrayList<Printer>(); //TODO use interface
+    private List<Print> prints = new ArrayList<Print>(); //TODO use interface
+    private List<Spool> spools = new ArrayList<Spool>(); //TODO use interface
 
-    private ArrayList<Spool> freeSpools = new ArrayList<>(); // TODO: Decide if this should be used at all.
-    private ArrayList<Printer> freePrinters = new ArrayList<>();
-    private ArrayList<PrintTask> pendingPrintTasks = new ArrayList<>();
-    private HashMap<Printer, PrintTask> runningPrintTasks = new HashMap();
+    private List<Spool> freeSpools = new ArrayList<>(); // TODO: Decide if this should be used at all.
+    private List<Printer> freePrinters = new ArrayList<>();
+    private List<PrintTask> pendingPrintTasks = new ArrayList<>();
+    private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
     //FIXME: reduce addPrinter method args (create a class to pass or
     // FIXME: code smell / too many arguments / method can be reduced and simplified by substituing half of the args with a Printer object which can also make the method shorter
@@ -50,6 +50,7 @@ public class PrinterManager {
         PrintTask chosenTask = null;
         // First we look if there's a task that matches the current spool on the printer.
         if(spools[0] != null) {
+            //todo : move to its own method - refactor -> move to method - matchCurrentSpool
             for (PrintTask printTask : pendingPrintTasks) {
                 if (printer.printFits(printTask.getPrint())) {
                     if (printer instanceof StandardFDM && printTask.getFilamentType() != FilamentType.ABS && printTask.getColors().size() == 1) {
@@ -90,6 +91,7 @@ public class PrinterManager {
             System.out.println("- Started task: " + chosenTask + " on printer " + printer.getName());
         } else {
             // If we didn't find a print for the current spool we search for a print with the free spools.
+            //todo : move to its own method - refactor -> move to method - matchFreeSpools
             for(PrintTask printTask: pendingPrintTasks) {
                 if(printer.printFits(printTask.getPrint()) && getPrinterCurrentTask(printer) == null) {
                     if (printer instanceof StandardFDM && printTask.getFilamentType() != FilamentType.ABS && printTask.getColors().size() == 1) {
@@ -172,11 +174,11 @@ public class PrinterManager {
         prints.add(p);
     }
 
-    public ArrayList<Print> getPrints() {
+    public List<Print> getPrints() {
         return prints;
     }
 
-    public ArrayList<Printer> getPrinters() {
+    public List<Printer> getPrinters() {
         return printers;
     }
 
@@ -188,7 +190,7 @@ public class PrinterManager {
         return runningPrintTasks.get(printer);
     }
 
-    public ArrayList<PrintTask> getPendingPrintTasks() {return pendingPrintTasks; }
+    public List<PrintTask> getPendingPrintTasks() {return pendingPrintTasks; }
 
     public void addPrintTask(String printName, List<String> colors, FilamentType type) {
         Print print = findPrint(printName);
@@ -315,9 +317,9 @@ public class PrinterManager {
     }
 
     private void printError(String s) {
-        System.out.println("<<---------- Error Message ---------->");
+        System.out.println("---------- Error Message ----------");
         System.out.println("Error: "+s);
-        System.out.println("<-------------------------------------->>");
+        System.out.println("--------------------------------------");
     }
 
 }

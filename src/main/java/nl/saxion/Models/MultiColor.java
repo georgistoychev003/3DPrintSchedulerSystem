@@ -50,8 +50,8 @@ public class MultiColor extends StandardFDM {
         if(spool4 != null) {
             spools = spools.replace(System.lineSeparator(), ", " + spool4.getId() + System.lineSeparator());
         }
-        spools = spools.replace("-------->", "- maxColors: " + maxColors + System.lineSeparator() +
-               "-------->");
+        spools = spools.replace("--------", "- maxColors: " + maxColors + System.lineSeparator() +
+               "--------");
         resultArray[resultArray.length-1] = spools;
         result = String.join("- ", resultArray);
 
