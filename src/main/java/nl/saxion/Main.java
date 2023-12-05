@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);
-    private PrinterManager manager = new PrinterManager();
+    private PrintTaskManager printTaskManager = new PrintTaskManager();
 
     private String printStrategy = "Less Spool Changes";
 
@@ -82,7 +82,7 @@ public class Main {
 
     private void startPrintQueue() {
         System.out.println("---------- Starting Print Queue ----------");
-        manager.startInitialQueue();
+        printTaskManager.startInitialQueue();
         System.out.println("-----------------------------------");
     }
 
@@ -110,10 +110,10 @@ public class Main {
 
     // TODO: This should be based on which printer is finished printing.
     private void registerPrintCompletion() {
-        List<Printer> printers = manager.getPrinters();
+        List<Printer> printers = printTaskManager.getPrinterManager().getPrinters();
         System.out.println("---------- Currently Running Printers ----------");
         for(Printer p: printers) {
-            PrintTask printerCurrentTask= manager.getPrinterCurrentTask(p);
+            PrintTask printerCurrentTask= printTaskManager.getPrinterCurrentTask(p);
             if(printerCurrentTask != null) {
                 System.out.println("- " + p.getId() + ": " +p.getName() + " - " + printerCurrentTask);
             }
@@ -121,14 +121,14 @@ public class Main {
         System.out.print("- Printer that is done (ID): ");
         int printerId = numberInput(-1, printers.size());
         System.out.println("-----------------------------------");
-        manager.registerCompletion(printerId);
+        printTaskManager.registerCompletion(printerId);
     }
 
     private void registerPrinterFailure() {
-        List<Printer> printers = manager.getPrinters();
+        List<Printer> printers = printTaskManager.getPrinterManager().getPrinters();
         System.out.println("---------- Currently Running Printers ----------");
         for(Printer p: printers) {
-            PrintTask printerCurrentTask= manager.getPrinterCurrentTask(p);
+            PrintTask printerCurrentTask= printTaskManager.getPrinterCurrentTask(p);
             if(printerCurrentTask != null) {
                 System.out.println("- " + p.getId() + ": " +p.getName() + " > " + printerCurrentTask);
             }
@@ -136,13 +136,13 @@ public class Main {
         System.out.print("- Printer ID that failed: ");
         int printerId = numberInput(1, printers.size());
 
-        manager.registerPrinterFailure(printerId);
+        printTaskManager.registerPrinterFailure(printerId);
         System.out.println("-----------------------------------");
     }
 
     private void addNewPrintTask() {
         List<String> colors = new ArrayList<>();
-        var prints = manager.getPrints();
+        var prints = printTaskManager.getPrintManager().getPrints();
         System.out.println("---------- New Print Task ----------");
         System.out.println("---------- Available prints ----------");
         int counter = 1;
@@ -154,7 +154,7 @@ public class Main {
         System.out.print("- Print number: ");
         int printNumber = numberInput(1, prints.size());
         System.out.println("--------------------------------------");
-        Print print = manager.findPrint(printNumber - 1);
+        Print print = printTaskManager.getPrintManager().findPrint(printNumber - 1);
         String printName = print.getName();
         System.out.println("---------- Filament Type ----------");
         System.out.println("- 1: PLA");
@@ -178,7 +178,7 @@ public class Main {
                 System.out.println("- Not a valid filamentType, bailing out");
                 return;
         }
-        var spools = manager.getSpools();
+        var spools = printTaskManager.getSpoolManager().getSpools();
         System.out.println("---------- Colors ----------");
         ArrayList<String> availableColors = new ArrayList<>();
         counter = 1;
@@ -200,12 +200,12 @@ public class Main {
         }
         System.out.println("--------------------------------------");
 
-        manager.addPrintTask(printName, colors, type);
+        printTaskManager.addPrintTask(printName, colors, type);
         System.out.println("----------------------------");
     }
 
     private void showPrints() {
-        var prints = manager.getPrints();
+        var prints = printTaskManager.getPrintManager().getPrints();
         System.out.println("---------- Available prints ----------");
         for (Print p : prints) {
             System.out.println(p);
@@ -214,7 +214,7 @@ public class Main {
     }
 
     private void showSpools() {
-        var spools = manager.getSpools();
+        var spools = printTaskManager.getSpoolManager().getSpools();
         System.out.println("---------- Spools ----------");
         for (Spool spool : spools) {
             System.out.println(spool);
@@ -223,11 +223,11 @@ public class Main {
     }
 
     private void showPrinters() {
-        var printers = manager.getPrinters();
+        var printers = printTaskManager.getPrinterManager().getPrinters();
         System.out.println("--------- Available printers ---------");
         for (Printer p : printers) {
             String output = p.toString();
-            PrintTask currentTask = manager.getPrinterCurrentTask(p);
+            PrintTask currentTask = printTaskManager.getPrinterCurrentTask(p);
             if(currentTask != null) {
                 output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
                         "--------");
@@ -238,7 +238,7 @@ public class Main {
     }
 
     private void showPendingPrintTasks() {
-        List<PrintTask> printTasks = manager.getPendingPrintTasks();
+        List<PrintTask> printTasks = printTaskManager.getPendingPrintTasks();
         System.out.println("--------- Pending Print Tasks ---------");
         for (PrintTask p : printTasks) {
             System.out.println(p);
@@ -272,7 +272,7 @@ public class Main {
                 for(int i = 0; i < fLength.size(); i++) {
                     filamentLength.add(((Double) fLength.get(i)));
                 }
-                manager.addPrint(name, height, width, length, filamentLength, printTime);
+                printTaskManager.getPrintManager().addPrint(name, height, width, length, filamentLength, printTime);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
@@ -301,7 +301,7 @@ public class Main {
                 int maxY = ((Long) printer.get("maxY")).intValue();
                 int maxZ = ((Long) printer.get("maxZ")).intValue();
                 int maxColors = ((Long) printer.get("maxColors")).intValue();
-                manager.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
+                printTaskManager.getPrinterManager().addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
@@ -340,7 +340,7 @@ public class Main {
                         System.out.println("- Not a valid filamentType, bailing out");
                         return;
                 }
-                manager.addSpool(new Spool(id, color, type, length));
+                printTaskManager.getSpoolManager().addSpool(new Spool(id, color, type, length));
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package nl.saxion.Models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Printer {
     private int id;
@@ -21,7 +22,7 @@ public abstract class Printer {
 
     public abstract Spool[] getCurrentSpools();
 
-    public abstract void setCurrentSpools(ArrayList<Spool> spools);
+    public abstract void setCurrentSpools(List<Spool> spools);
 
     public abstract boolean printFits(Print print);
 

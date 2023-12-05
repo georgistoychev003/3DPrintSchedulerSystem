@@ -1,6 +1,7 @@
 package nl.saxion.Models;
 
 import java.util.ArrayList;
+import java.util.List;
 //FIXME Uncommunicative name of the class as the naming conventions of the naming are not met
 
 /* Printer capable of printing multiple colors. */
@@ -17,7 +18,7 @@ public class MultiColor extends StandardFDM {
         this.maxColors = maxColors;
     }
 
-    public void setCurrentSpools(ArrayList<Spool> spools) {
+    public void setCurrentSpools(List<Spool> spools) {
         setCurrentSpool(spools.get(0));
         if(spools.size() > 1) spool2 = spools.get(1);
         if(spools.size() > 2) spool3 = spools.get(2);

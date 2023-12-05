@@ -1,6 +1,7 @@
 package nl.saxion.Models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Print {
     private String name;
@@ -9,10 +10,10 @@ public class Print {
     private int length;
     //FIXME: Initialize as List(instead of ArrayList) for more flexibility- solution sparwl
 
-    private ArrayList<Double> filamentLength;
+    private List<Double> filamentLength;
     private int printTime;
 
-    public Print(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
+    public Print(String name, int height, int width, int length, List<Double> filamentLength, int printTime) {
         this.name = name;
         this.height = height;
         this.width = width;
@@ -50,7 +51,7 @@ public class Print {
         return width;
     }
 
-    public ArrayList<Double> getFilamentLength() {
+    public List<Double> getFilamentLength() {
         return filamentLength;
     }
 }

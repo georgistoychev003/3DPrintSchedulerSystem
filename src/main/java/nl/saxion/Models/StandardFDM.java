@@ -1,6 +1,7 @@
 package nl.saxion.Models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /* Standard cartesian FDM printer */
 public class StandardFDM extends Printer {
@@ -17,7 +18,8 @@ public class StandardFDM extends Printer {
 
     }
 
-    public void setCurrentSpools(ArrayList<Spool> spools) {
+    // FIXME: how does it set all of them???
+    public void setCurrentSpools(List<Spool> spools) {
         this.currentSpool = spools.get(0);
     }
 
@@ -29,6 +31,7 @@ public class StandardFDM extends Printer {
         return currentSpool;
     }
 
+    // FIXME: ????
     public Spool[] getCurrentSpools() {
         Spool[] spools = new Spool[1];
         if(currentSpool != null) {
@@ -42,6 +45,7 @@ public class StandardFDM extends Printer {
         return print.getHeight() <= maxZ && print.getWidth() <= maxX && print.getLength() <= maxY;
     }
 
+    //FIXME: name wrong / not implemented
     @Override
     public int CalculatePrintTime(String filename) {
         return 0;
