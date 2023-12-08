@@ -9,13 +9,14 @@ public class StandardFDM extends Printer {
     private final int maxY;
     private final int maxZ;
     private Spool currentSpool;
+    private boolean isHoused;
 
     public StandardFDM(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ) {
         super(id, printerName, manufacturer);
         this.maxX = maxX;
         this.maxY = maxY;
         this.maxZ = maxZ;
-
+        isHoused = false;
     }
 
     // FIXME: how does it set all of them???
@@ -25,6 +26,14 @@ public class StandardFDM extends Printer {
 
     public void setCurrentSpool(Spool spool) {
         this.currentSpool = spool;
+    }
+
+    public boolean isHoused() {
+        return isHoused;
+    }
+
+    public void setHoused(boolean housed) {
+        isHoused = housed;
     }
 
     public Spool getCurrentSpool() {

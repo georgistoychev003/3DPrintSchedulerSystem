@@ -7,8 +7,19 @@ import java.util.List;
 
 public class PrintManager {
 
+    private static PrintManager instance;
     private List<Print> prints = new ArrayList<Print>(); //TODO use interface
 
+    private PrintManager() {
+
+    }
+
+    public static PrintManager getInstance() {
+        if (instance == null){
+            instance = new PrintManager();
+        }
+        return instance;
+    }
 
     //FIXME: code smell // too many arguments / all can be replaced by a Print object
     public void addPrint(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {

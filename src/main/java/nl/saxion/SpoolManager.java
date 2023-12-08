@@ -8,8 +8,21 @@ import java.util.List;
 
 public class SpoolManager {
 
+    private static SpoolManager instance;
     private List<Spool> spools = new ArrayList<Spool>(); //TODO use interface
     private List<Spool> freeSpools = new ArrayList<>();
+
+
+    private SpoolManager() {
+
+    }
+
+    public static SpoolManager getInstance() {
+        if (instance == null){
+            instance = new SpoolManager();
+        }
+        return instance;
+    }
 
     public List<Spool> getNeededSpools(PrintTask printTask) {
         List<Spool> chosenSpools = new ArrayList<>();

@@ -11,9 +11,9 @@ public class PrintTaskManager {
 
     private List<PrintTask> pendingPrintTasks = new ArrayList<>();
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
-    private PrinterManager printerManager = new PrinterManager();
-    private SpoolManager spoolManager = new SpoolManager();
-    private PrintManager printManager = new PrintManager();
+    private PrinterManager printerManager = PrinterManager.getInstance();
+    private SpoolManager spoolManager = SpoolManager.getInstance();
+    private PrintManager printManager = PrintManager.getInstance();
 
 
     //FIXME: code smell??? // can be replaced with stream
@@ -49,10 +49,7 @@ public class PrintTaskManager {
     private PrintTask matchFreeSpoolsWithPrintTask(Printer printer, PrintTask chosenTask) {
         for(PrintTask printTask: pendingPrintTasks) {
             if(printer.printFits(printTask.getPrint()) && getPrinterCurrentTask(printer) == null) {
-                if (printer instanceof StandardFDM && printTask.getFilamentType() != FilamentType.ABS && printTask.getColors().size() == 1) {
-                    chosenTask = getStandardFDMPrintTask(printer, chosenTask, printTask);
-
-                } else if (printer instanceof HousedPrinter && printTask.getColors().size() == 1) {
+                if (printer instanceof StandardFDM && printTask.getColors().size() == 1) {
                     chosenTask = getStandardFDMPrintTask(printer, chosenTask, printTask);
 
                 } else if (printer instanceof MultiColor && printTask.getFilamentType() != FilamentType.ABS
@@ -143,7 +140,7 @@ public class PrintTaskManager {
     }
 
     private PrintTask matchHousedPrinter(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
-        if (printer instanceof HousedPrinter && printTask.getColors().size() == 1) {
+        if (printer instanceof StandardFDM && printTask.getFilamentType() == FilamentType.ABS && printTask.getColors().size() == 1) {
             if (spools[0].spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
                 runningPrintTasks.put(printer, printTask);
                 printerManager.removeFreePrinter(printer);

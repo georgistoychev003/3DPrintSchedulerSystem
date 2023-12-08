@@ -10,6 +10,7 @@ public class PrinterManager {
     // TODO: create SpoolManager and PrintTaskManager
     // FIXME: code smell // class has too much functionality and the name states that is PrinterManager, however it handles prints and spools as well so different manager classes should be created for them
     // FIXME: code smell // all lists are directly given an ArrayList variable type, this reduces flexibility so it can be substituted with List<?> / same for the hashmap
+    private static PrinterManager instance;
     private List<Printer> printers = new ArrayList<Printer>(); //TODO use interface
     private List<Printer> freePrinters = new ArrayList<>();
 
@@ -17,13 +18,19 @@ public class PrinterManager {
     //FIXME: reduce addPrinter method args (create a class to pass or
     // FIXME: code smell / too many arguments / method can be reduced and simplified by substituing half of the args with a Printer object which can also make the method shorter
 
+    public static PrinterManager getInstance() {
+        if (instance == null){
+            instance = new PrinterManager();
+        }
+        return instance;
+    }
+
     public void addPrinter(int id, int printerType, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
-        if (printerType == 1) {
+        if (printerType == 1 || printerType == 2) {
             StandardFDM printer = new StandardFDM(id, printerName, manufacturer, maxX, maxY, maxZ);
-            printers.add(printer);
-            freePrinters.add(printer);
-        } else if (printerType == 2) {
-            HousedPrinter printer = new HousedPrinter(id, printerName, manufacturer, maxX, maxY, maxZ);
+            if (printerType == 2) {
+                printer.setHoused(true);
+            }
             printers.add(printer);
             freePrinters.add(printer);
         } else if (printerType == 3) {

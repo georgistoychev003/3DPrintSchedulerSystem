@@ -21,6 +21,7 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
     private PrintTaskManager printTaskManager = new PrintTaskManager();
 
+
     private String printStrategy = "Less Spool Changes";
 
     public static void main(String[] args) {
