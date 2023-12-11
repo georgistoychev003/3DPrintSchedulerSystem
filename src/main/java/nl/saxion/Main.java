@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);
-    private PrintTaskManager printTaskManager = new PrintTaskManager();
-
+    private PrintingFacade printingFacade = new PrintingFacade();
 
     private String printStrategy = "Less Spool Changes";
 
@@ -30,13 +29,13 @@ public class Main {
 
     public void run(String[] args) {
         if(args.length > 0) {
-            readPrintsFromFile(args[0]);
-            readSpoolsFromFile(args[1]);
-            readPrintersFromFile(args[2]);
+            printingFacade.readPrintsFromFile(args[0]);
+            printingFacade.readSpoolsFromFile(args[1]);
+           printingFacade.readPrintersFromFile(args[2]);
         } else {
-            readPrintsFromFile("");
-            readSpoolsFromFile("");
-            readPrintersFromFile("");
+           printingFacade.readPrintsFromFile("");
+            printingFacade.readSpoolsFromFile("");
+            printingFacade.readPrintersFromFile("");
         }
         int choice = 1;
         while (choice > 0 && choice < 10) {
@@ -52,15 +51,15 @@ public class Main {
             } else if (choice == 4) {
                 changePrintStrategy();
             } else if (choice == 5) {
-                startPrintQueue();
+               printingFacade.startPrintQueue();
             } else if (choice == 6) {
-                showPrints();
+                printingFacade.showPrints();
             } else if (choice == 7) {
-                showPrinters();
+                printingFacade.showPrinters();
             } else if (choice == 8) {
-                showSpools();
+                printingFacade.showSpools();
             } else if (choice == 9) {
-                showPendingPrintTasks();
+                printingFacade.showPendingPrintTasks();
             }
         }
         exit();
@@ -79,12 +78,6 @@ public class Main {
         System.out.println("- 9) Show pending print tasks");
         System.out.println("- 0) Exit");
 
-    }
-
-    private void startPrintQueue() {
-        System.out.println("---------- Starting Print Queue ----------");
-        printTaskManager.startInitialQueue();
-        System.out.println("-----------------------------------");
     }
 
     private void exit() {
@@ -111,242 +104,80 @@ public class Main {
 
     // TODO: This should be based on which printer is finished printing.
     private void registerPrintCompletion() {
-        List<Printer> printers = printTaskManager.getPrinterManager().getPrinters();
-        System.out.println("---------- Currently Running Printers ----------");
-        for(Printer p: printers) {
-            PrintTask printerCurrentTask= printTaskManager.getPrinterCurrentTask(p);
-            if(printerCurrentTask != null) {
-                System.out.println("- " + p.getId() + ": " +p.getName() + " - " + printerCurrentTask);
-            }
-        }
+        //Print running printers
+        int numberOfRunningPrinters = printingFacade.printCurrentlyRunningPrinters();
+
         System.out.print("- Printer that is done (ID): ");
-        int printerId = numberInput(-1, printers.size());
+        int printerId = numberInput(-1, numberOfRunningPrinters);
+
+        printingFacade.registerSucceededPrinter(printerId);
+
         System.out.println("-----------------------------------");
-        printTaskManager.registerCompletion(printerId);
     }
 
     private void registerPrinterFailure() {
-        List<Printer> printers = printTaskManager.getPrinterManager().getPrinters();
-        System.out.println("---------- Currently Running Printers ----------");
-        for(Printer p: printers) {
-            PrintTask printerCurrentTask= printTaskManager.getPrinterCurrentTask(p);
-            if(printerCurrentTask != null) {
-                System.out.println("- " + p.getId() + ": " +p.getName() + " > " + printerCurrentTask);
-            }
-        }
-        System.out.print("- Printer ID that failed: ");
-        int printerId = numberInput(1, printers.size());
+        //Print running printers
+        int numberOfRunningPrinters = printingFacade.printCurrentlyRunningPrinters();
 
-        printTaskManager.registerPrinterFailure(printerId);
+        System.out.print("- Printer ID that failed: ");
+        int printerId = numberInput(1, numberOfRunningPrinters);
+
+        printingFacade.registerFailedPrinter(printerId);
+
         System.out.println("-----------------------------------");
     }
 
     private void addNewPrintTask() {
-        List<String> colors = new ArrayList<>();
-        var prints = printTaskManager.getPrintManager().getPrints();
-        System.out.println("---------- New Print Task ----------");
-        System.out.println("---------- Available prints ----------");
-        int counter = 1;
-        for (Print p : prints) {
-            System.out.println("- " + counter + ": " + p.getName());
-            counter++;
-        }
+        //Selecting the print
+        Print print = selectPrint();
+        String printName = print.getName();
 
+        //Select filament type
+        FilamentType type = selectFilamentType();
+        if (type == null){return;}
+
+        //Select available colors
+        List<String> colors = selectColors(type, print);
+
+        //Create the print task
+        printingFacade.createPrintTask(printName, colors, type);
+        System.out.println("----------------------------");
+    }
+
+    private Print selectPrint() {
+        List<Print> prints = printingFacade.showPrints();
         System.out.print("- Print number: ");
         int printNumber = numberInput(1, prints.size());
         System.out.println("--------------------------------------");
-        Print print = printTaskManager.getPrintManager().findPrint(printNumber - 1);
-        String printName = print.getName();
-        System.out.println("---------- Filament Type ----------");
-        System.out.println("- 1: PLA");
-        System.out.println("- 2: PETG");
-        System.out.println("- 3: ABS");
+        return printingFacade.findSelectedPrint(printNumber);
+    }
+
+    private FilamentType selectFilamentType() {
+        List<FilamentType> filamentTypes = printingFacade.showFilamentTypes();
         System.out.print("- Filament type number: ");
-        int ftype = numberInput(1, 3);
+        int ftype = numberInput(1, filamentTypes.size());
         System.out.println("--------------------------------------");
-        FilamentType type;
-        switch (ftype) {
-            case 1:
-                type = FilamentType.PLA;
-                break;
-            case 2:
-                type = FilamentType.PETG;
-                break;
-            case 3:
-                type = FilamentType.ABS;
-                break;
-            default:
-                System.out.println("- Not a valid filamentType, bailing out");
-                return;
-        }
-        var spools = printTaskManager.getSpoolManager().getSpools();
-        System.out.println("---------- Colors ----------");
-        ArrayList<String> availableColors = new ArrayList<>();
-        counter = 1;
-        for (Spool spool : spools) {
-            String colorString = spool.getColor();
-            if(type == spool.getFilamentType() && !availableColors.contains(colorString)) {
-                System.out.println("- " + counter + ": " + colorString + " (" + spool.getFilamentType() + ")");
-                availableColors.add(colorString);
-                counter++;
-            }
-        }
+        return printingFacade.getSelectedFilamentType(ftype, filamentTypes);
+    }
+
+    private List<String> selectColors(FilamentType type, Print print) {
+        List<String> colors = new ArrayList<>();
+        List<String> availableColors = printingFacade.getAvailableColors(type);
         System.out.print("- Color number: ");
         int colorChoice = numberInput(1, availableColors.size());
         colors.add(availableColors.get(colorChoice-1));
+
         for(int i = 1; i < print.getFilamentLength().size(); i++) {
             System.out.print("- Color number: ");
             colorChoice = numberInput(1, availableColors.size());
             colors.add(availableColors.get(colorChoice-1));
         }
         System.out.println("--------------------------------------");
-
-        printTaskManager.addPrintTask(printName, colors, type);
-        System.out.println("----------------------------");
+        return colors;
     }
 
-    private void showPrints() {
-        var prints = printTaskManager.getPrintManager().getPrints();
-        System.out.println("---------- Available prints ----------");
-        for (Print p : prints) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
-    }
-
-    private void showSpools() {
-        var spools = printTaskManager.getSpoolManager().getSpools();
-        System.out.println("---------- Spools ----------");
-        for (Spool spool : spools) {
-            System.out.println(spool);
-        }
-        System.out.println("----------------------------");
-    }
-
-    private void showPrinters() {
-        var printers = printTaskManager.getPrinterManager().getPrinters();
-        System.out.println("--------- Available printers ---------");
-        for (Printer p : printers) {
-            String output = p.toString();
-            PrintTask currentTask = printTaskManager.getPrinterCurrentTask(p);
-            if(currentTask != null) {
-                output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
-                        "--------");
-            }
-            System.out.println(output);
-        }
-        System.out.println("--------------------------------------");
-    }
-
-    private void showPendingPrintTasks() {
-        List<PrintTask> printTasks = printTaskManager.getPendingPrintTasks();
-        System.out.println("--------- Pending Print Tasks ---------");
-        for (PrintTask p : printTasks) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
-    }
 
     //todo : move all reads to their own classes (single - responsibility principle)
-    private void readPrintsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "prints.json";
-        }
-        URL printResource = getClass().getResource("/" + filename);
-        if (printResource == null) {
-            System.err.println("Warning: Could not find prints.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray prints = (JSONArray) jsonParser.parse(reader);
-            for (Object p : prints) {
-                JSONObject print = (JSONObject) p;
-                String name = (String) print.get("name");
-                int height = ((Long) print.get("height")).intValue();
-                int width = ((Long) print.get("width")).intValue();
-                int length = ((Long) print.get("length")).intValue();
-                //int filamentLength = ((Long) print.get("filamentLength")).intValue();
-                JSONArray fLength = (JSONArray) print.get("filamentLength");
-                int printTime = ((Long) print.get("printTime")).intValue();
-                ArrayList<Double> filamentLength = new ArrayList();
-                for(int i = 0; i < fLength.size(); i++) {
-                    filamentLength.add(((Double) fLength.get(i)));
-                }
-                printTaskManager.getPrintManager().addPrint(name, height, width, length, filamentLength, printTime);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void readPrintersFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "printers.json";
-        }
-        URL printersResource = getClass().getResource("/" + filename);
-        if (printersResource == null) {
-            System.err.println("Warning: Could not find printers.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printersResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray printers = (JSONArray) jsonParser.parse(reader);
-            for (Object p : printers) {
-                JSONObject printer = (JSONObject) p;
-                int id = ((Long) printer.get("id")).intValue();
-                int type = ((Long) printer.get("type")).intValue();
-                String name = (String) printer.get("name");
-                String manufacturer = (String) printer.get("manufacturer");
-                int maxX = ((Long) printer.get("maxX")).intValue();
-                int maxY = ((Long) printer.get("maxY")).intValue();
-                int maxZ = ((Long) printer.get("maxZ")).intValue();
-                int maxColors = ((Long) printer.get("maxColors")).intValue();
-                printTaskManager.getPrinterManager().addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-    private void readSpoolsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "spools.json";
-        }
-        URL spoolsResource = getClass().getResource("/" + filename);
-        if (spoolsResource == null) {
-            System.err.println("Warning: Could not find spools.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(spoolsResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray spools = (JSONArray) jsonParser.parse(reader);
-            for (Object p : spools) {
-                JSONObject spool = (JSONObject) p;
-                int id = ((Long) spool.get("id")).intValue();
-                String color = (String) spool.get("color");
-                String filamentType = (String) spool.get("filamentType");
-                double length = (Double) spool.get("length");
-                FilamentType type;
-                switch (filamentType) {
-                    case "PLA":
-                        type = FilamentType.PLA;
-                        break;
-                    case "PETG":
-                        type = FilamentType.PETG;
-                        break;
-                    case "ABS":
-                        type = FilamentType.ABS;
-                        break;
-                    default:
-                        System.out.println("- Not a valid filamentType, bailing out");
-                        return;
-                }
-                printTaskManager.getSpoolManager().addSpool(new Spool(id, color, type, length));
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
 
     public int menuChoice(int max) {
         int choice = -1;
