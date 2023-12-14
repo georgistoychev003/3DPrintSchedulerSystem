@@ -11,11 +11,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PrintingFacade implements IFacade{
-
 
 
     @Override
@@ -34,9 +33,7 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public void startPrintQueue() {
-        System.out.println("---------- Starting Print Queue ----------");
         getPrintTaskManager().startInitialQueue();
-        System.out.println("-----------------------------------");
     }
 
     @Override
@@ -56,19 +53,15 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public List<String> getAvailableColors(FilamentType filamentType) {
-        var spools = getSpoolManager().getSpools();
-        System.out.println("---------- Colors ----------");
-        ArrayList<String> availableColors = new ArrayList<>();
-        int counter = 1;
+        List<Spool> spools = getSpools();
+        Set<String> availableColors = new HashSet<>();
         for (Spool spool : spools) {
             String colorString = spool.getColor();
-            if(filamentType == spool.getFilamentType() && !availableColors.contains(colorString)) {
-                System.out.println("- " + counter + ": " + colorString + " (" + spool.getFilamentType() + ")");
+            if(filamentType == spool.getFilamentType()) {
                 availableColors.add(colorString);
-                counter++;
             }
         }
-        return availableColors;
+        return availableColors.stream().toList();
     }
 
     @Override
@@ -77,25 +70,14 @@ public class PrintingFacade implements IFacade{
     }
 
     @Override
-    public List<FilamentType> showFilamentTypes() {
-        List<FilamentType> filamentTypes = new ArrayList<>();
-        getSpoolManager().getSpools().forEach(spool -> {
-            if (!filamentTypes.contains(spool.getFilamentType())){
-                filamentTypes.add(spool.getFilamentType());
-            }
-        });
-        System.out.println("---------- Filament Type ----------");
-        int counter = 1;
-        filamentTypes.forEach(type -> {
-            System.out.println("- " + counter + ": " + type);
-        });
-
-        return filamentTypes;
+    public List<FilamentType> getFilamentTypes() {
+        return new ArrayList<>(EnumSet.allOf(FilamentType.class));
     }
 
     @Override
     public FilamentType getSelectedFilamentType(int filamentTypeNumber, List<FilamentType> filamentTypes) {
         if (filamentTypeNumber > filamentTypes.size() || filamentTypeNumber < 1){
+            // TODO: throw exception
             System.out.println("Not a valid filament type.");
             return null;
         }
@@ -108,52 +90,33 @@ public class PrintingFacade implements IFacade{
     }
 
     @Override
-    public List<Print> showPrints() {
-        var prints = getPrintManager().getPrints();
-        System.out.println("---------- Available prints ----------");
-        for (Print p : prints) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
-
-        return prints;
+    public List<Print> getPrints() {
+        return getPrintManager().getPrints();
     }
 
     @Override
-    public void showSpools() {
-        List<Spool> spools = getSpoolManager().getSpools();
-        System.out.println("---------- Spools ----------");
-        for (Spool spool : spools) {
-            System.out.println(spool);
-        }
-        System.out.println("----------------------------");
+    public List<Spool> getSpools() {
+        return getSpoolManager().getSpools();
     }
 
     @Override
-    public void showPrinters() {
-        List<Printer> printers = getPrinterManager().getPrinters();
-        System.out.println("--------- Available printers ---------");
-        for (Printer p : printers) {
-            String output = p.toString();
-            PrintTask currentTask = getPrintTaskManager().getPrinterCurrentTask(p);
-            if(currentTask != null) {
-                output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
-                        "--------");
-            }
-            System.out.println(output);
-        }
-        System.out.println("--------------------------------------");
+    public List<Printer> getPrinters() {
+        return getPrinterManager().getPrinters();
     }
 
     @Override
-    public void showPendingPrintTasks() {
-        List<PrintTask> printTasks = getPrintTaskManager().getPendingPrintTasks();
-        System.out.println("--------- Pending Print Tasks ---------");
-        for (PrintTask p : printTasks) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
+    public PrintTask getCurrentTaskOfAPrinter(Printer p) {
+        return getPrintTaskManager().getPrinterCurrentTask(p);
     }
+
+    @Override
+    public List<PrintTask> getPendingPrintTasks() {
+        return getPrintTaskManager().getPendingPrintTasks();
+    }
+
+//    public List<PrinterDTO> getPrinters() {
+//        return getPrinterManager().getPrinters().stream().map(p -> p.asDTO()).collect(Collectors.toList());
+//    }
 
     @Override
     public void readPrintsFromFile(String filename) {

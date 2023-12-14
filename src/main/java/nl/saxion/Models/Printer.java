@@ -8,6 +8,10 @@ public abstract class Printer {
     private String name;
     private String manufacturer;
 
+    PrinterDTO asDTO() {
+        return new PrinterDTO(id, name, manufacturer);
+    }
+
     public Printer(int id, String printerName, String manufacturer) {
         this.id = id;
         this.name = printerName;
@@ -39,3 +43,5 @@ public abstract class Printer {
         return name;
     }
 }
+
+record PrinterDTO(int id, String name, String manufacturer) {}
