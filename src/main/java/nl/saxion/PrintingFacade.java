@@ -11,12 +11,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PrintingFacade implements IFacade{
 
+    private FileHandler fileHandler;
 
+    public PrintingFacade() {
+        this.fileHandler = new JSONAdapter();
+    }
 
     @Override
     public int printCurrentlyRunningPrinters() {
@@ -34,9 +38,7 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public void startPrintQueue() {
-        System.out.println("---------- Starting Print Queue ----------");
         getPrintTaskManager().startInitialQueue();
-        System.out.println("-----------------------------------");
     }
 
     @Override
@@ -56,19 +58,15 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public List<String> getAvailableColors(FilamentType filamentType) {
-        var spools = getSpoolManager().getSpools();
-        System.out.println("---------- Colors ----------");
-        ArrayList<String> availableColors = new ArrayList<>();
-        int counter = 1;
+        List<Spool> spools = getSpools();
+        Set<String> availableColors = new HashSet<>();
         for (Spool spool : spools) {
             String colorString = spool.getColor();
-            if(filamentType == spool.getFilamentType() && !availableColors.contains(colorString)) {
-                System.out.println("- " + counter + ": " + colorString + " (" + spool.getFilamentType() + ")");
+            if(filamentType == spool.getFilamentType()) {
                 availableColors.add(colorString);
-                counter++;
             }
         }
-        return availableColors;
+        return availableColors.stream().toList();
     }
 
     @Override
@@ -77,25 +75,14 @@ public class PrintingFacade implements IFacade{
     }
 
     @Override
-    public List<FilamentType> showFilamentTypes() {
-        List<FilamentType> filamentTypes = new ArrayList<>();
-        getSpoolManager().getSpools().forEach(spool -> {
-            if (!filamentTypes.contains(spool.getFilamentType())){
-                filamentTypes.add(spool.getFilamentType());
-            }
-        });
-        System.out.println("---------- Filament Type ----------");
-        int counter = 1;
-        filamentTypes.forEach(type -> {
-            System.out.println("- " + counter + ": " + type);
-        });
-
-        return filamentTypes;
+    public List<FilamentType> getFilamentTypes() {
+        return new ArrayList<>(EnumSet.allOf(FilamentType.class));
     }
 
     @Override
     public FilamentType getSelectedFilamentType(int filamentTypeNumber, List<FilamentType> filamentTypes) {
         if (filamentTypeNumber > filamentTypes.size() || filamentTypeNumber < 1){
+            // TODO: throw exception
             System.out.println("Not a valid filament type.");
             return null;
         }
@@ -108,99 +95,71 @@ public class PrintingFacade implements IFacade{
     }
 
     @Override
-    public List<Print> showPrints() {
-        var prints = getPrintManager().getPrints();
-        System.out.println("---------- Available prints ----------");
-        for (Print p : prints) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
-
-        return prints;
+    public List<Print> getPrints() {
+        return getPrintManager().getPrints();
     }
 
     @Override
-    public void showSpools() {
-        List<Spool> spools = getSpoolManager().getSpools();
-        System.out.println("---------- Spools ----------");
-        for (Spool spool : spools) {
-            System.out.println(spool);
-        }
-        System.out.println("----------------------------");
+    public List<Spool> getSpools() {
+        return getSpoolManager().getSpools();
     }
 
     @Override
-    public void showPrinters() {
-        List<Printer> printers = getPrinterManager().getPrinters();
-        System.out.println("--------- Available printers ---------");
-        for (Printer p : printers) {
-            String output = p.toString();
-            PrintTask currentTask = getPrintTaskManager().getPrinterCurrentTask(p);
-            if(currentTask != null) {
-                output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
-                        "--------");
-            }
-            System.out.println(output);
-        }
-        System.out.println("--------------------------------------");
+    public List<Printer> getPrinters() {
+        return getPrinterManager().getPrinters();
     }
 
     @Override
-    public void showPendingPrintTasks() {
-        List<PrintTask> printTasks = getPrintTaskManager().getPendingPrintTasks();
-        System.out.println("--------- Pending Print Tasks ---------");
-        for (PrintTask p : printTasks) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
+    public PrintTask getCurrentTaskOfAPrinter(Printer p) {
+        return getPrintTaskManager().getPrinterCurrentTask(p);
+    }
+
+    @Override
+    public List<PrintTask> getPendingPrintTasks() {
+        return getPrintTaskManager().getPendingPrintTasks();
     }
 
     @Override
     public void readPrintsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
         if(filename.length() == 0) {
-            filename = "prints.json";
+            filename = "src/main/resources/prints.json";
         }
-        URL printResource = getClass().getResource("/" + filename);
-        if (printResource == null) {
-            System.err.println("Warning: Could not find prints.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray prints = (JSONArray) jsonParser.parse(reader);
+        try {
+            // Read the file using the adapter
+            JSONArray prints = (JSONArray) fileHandler.readFile(filename);
+
+            // Process the JSON array as before
             for (Object p : prints) {
                 JSONObject print = (JSONObject) p;
                 String name = (String) print.get("name");
                 int height = ((Long) print.get("height")).intValue();
                 int width = ((Long) print.get("width")).intValue();
                 int length = ((Long) print.get("length")).intValue();
-                //int filamentLength = ((Long) print.get("filamentLength")).intValue();
                 JSONArray fLength = (JSONArray) print.get("filamentLength");
                 int printTime = ((Long) print.get("printTime")).intValue();
-                ArrayList<Double> filamentLength = new ArrayList();
+                ArrayList<Double> filamentLength = new ArrayList<>();
                 for(int i = 0; i < fLength.size(); i++) {
                     filamentLength.add(((Double) fLength.get(i)));
                 }
                 getPrintManager().addPrint(name, height, width, length, filamentLength, printTime);
             }
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
     @Override
     public void readPrintersFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
         if(filename.length() == 0) {
-            filename = "printers.json";
+            filename = "src/main/resources/printers.json";
         }
-        URL printersResource = getClass().getResource("/" + filename);
-        if (printersResource == null) {
-            System.err.println("Warning: Could not find printers.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printersResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray printers = (JSONArray) jsonParser.parse(reader);
+        try {
+            // Read the file using the adapter and cast the result
+            Object result = fileHandler.readFile(filename);
+            JSONArray printers = result instanceof JSONArray ? (JSONArray) result : new JSONArray();
+
+            // Process the JSON array as before
             for (Object p : printers) {
                 JSONObject printer = (JSONObject) p;
                 int id = ((Long) printer.get("id")).intValue();
@@ -213,24 +172,23 @@ public class PrintingFacade implements IFacade{
                 int maxColors = ((Long) printer.get("maxColors")).intValue();
                 getPrinterManager().addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
             }
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
     @Override
     public void readSpoolsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "spools.json";
+        if (filename.length() == 0) {
+            filename = "src/main/resources/spools.json";
         }
-        URL spoolsResource = getClass().getResource("/" + filename);
-        if (spoolsResource == null) {
-            System.err.println("Warning: Could not find spools.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(spoolsResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray spools = (JSONArray) jsonParser.parse(reader);
+        try {
+            // Read the file using the adapter and cast the result
+            Object result = fileHandler.readFile(filename);
+            JSONArray spools = result instanceof JSONArray ? (JSONArray) result : new JSONArray();
+
+            // Process the JSON array as before
             for (Object p : spools) {
                 JSONObject spool = (JSONObject) p;
                 int id = ((Long) spool.get("id")).intValue();
@@ -254,10 +212,11 @@ public class PrintingFacade implements IFacade{
                 }
                 getSpoolManager().addSpool(new Spool(id, color, type, length));
             }
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private PrinterManager getPrinterManager() {
         return PrinterManager.getInstance();

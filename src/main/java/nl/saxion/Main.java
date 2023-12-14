@@ -51,15 +51,17 @@ public class Main {
             } else if (choice == 4) {
                 changePrintStrategy();
             } else if (choice == 5) {
-               printingFacade.startPrintQueue();
+                System.out.println("---------- Starting Print Queue ----------");
+                printingFacade.startPrintQueue();
+                System.out.println("-----------------------------------");
             } else if (choice == 6) {
-                printingFacade.showPrints();
+                showPrints();
             } else if (choice == 7) {
-                printingFacade.showPrinters();
+                showPrinters();
             } else if (choice == 8) {
-                printingFacade.showSpools();
+                showSpools();
             } else if (choice == 9) {
-                printingFacade.showPendingPrintTasks();
+                showPendingPrintTasks();
             }
         }
         exit();
@@ -144,8 +146,74 @@ public class Main {
         System.out.println("----------------------------");
     }
 
+    //TODO: decide if these methods should also return the array from the facade or we have to call the facade everytime we need them
+    public void showPrints() {
+        var prints = printingFacade.getPrints();
+        System.out.println("---------- Available prints ----------");
+        for (Print p : prints) {
+            System.out.println(p);
+        }
+        System.out.println("--------------------------------------");
+    }
+
+    public void showSpools() {
+        List<Spool> spools = printingFacade.getSpools();
+        System.out.println("---------- Spools ----------");
+        for (Spool spool : spools) {
+            System.out.println(spool);
+        }
+        System.out.println("----------------------------");
+    }
+
+    public void showPrinters() {
+        List<Printer> printers = printingFacade.getPrinters();
+        System.out.println("--------- Available printers ---------");
+        for (Printer p : printers) {
+            String output = p.toString();
+            PrintTask currentTask = printingFacade.getCurrentTaskOfAPrinter(p);
+            if(currentTask != null) {
+                output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
+                        "--------");
+            }
+            System.out.println(output);
+        }
+        System.out.println("--------------------------------------");
+    }
+
+    public void showPendingPrintTasks() {
+        List<PrintTask> printTasks = printingFacade.getPendingPrintTasks();
+        System.out.println("--------- Pending Print Tasks ---------");
+        for (PrintTask p : printTasks) {
+            System.out.println(p);
+        }
+        System.out.println("--------------------------------------");
+    }
+
+    public List<FilamentType> showFilamentTypes() {
+        List<FilamentType> filamentTypes = printingFacade.getFilamentTypes();
+        System.out.println("---------- Filament Type ----------");
+        int counter = 1;
+        filamentTypes.forEach(type -> {
+            System.out.println("- " + counter + ": " + type);
+        });
+
+        return filamentTypes;
+    }
+
+    public List<String> showAvailableColors(FilamentType filamentType) {
+        List<String> availableColors = printingFacade.getAvailableColors(filamentType);
+        System.out.println("---------- Colors ----------");
+        for (int i = 1; i <= availableColors.size(); i++) {
+            String colorString = availableColors.get(i);
+            System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
+        }
+
+        return availableColors;
+    }
+
     private Print selectPrint() {
-        List<Print> prints = printingFacade.showPrints();
+        List<Print> prints = printingFacade.getPrints();
+        showPrints();
         System.out.print("- Print number: ");
         int printNumber = numberInput(1, prints.size());
         System.out.println("--------------------------------------");
@@ -153,7 +221,7 @@ public class Main {
     }
 
     private FilamentType selectFilamentType() {
-        List<FilamentType> filamentTypes = printingFacade.showFilamentTypes();
+        List<FilamentType> filamentTypes = showFilamentTypes();
         System.out.print("- Filament type number: ");
         int ftype = numberInput(1, filamentTypes.size());
         System.out.println("--------------------------------------");
@@ -162,7 +230,7 @@ public class Main {
 
     private List<String> selectColors(FilamentType type, Print print) {
         List<String> colors = new ArrayList<>();
-        List<String> availableColors = printingFacade.getAvailableColors(type);
+        List<String> availableColors = showAvailableColors(type);
         System.out.print("- Color number: ");
         int colorChoice = numberInput(1, availableColors.size());
         colors.add(availableColors.get(colorChoice-1));
