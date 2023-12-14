@@ -119,6 +119,10 @@ public class PrintingFacade implements IFacade{
         return getPrintTaskManager().getPendingPrintTasks();
     }
 
+//    public List<PrinterDTO> getPrinters() {
+//        return getPrinterManager().getPrinters().stream().map(p -> p.asDTO()).collect(Collectors.toList());
+//    }
+
     @Override
     public void readPrintsFromFile(String filename) {
         if(filename.length() == 0) {
