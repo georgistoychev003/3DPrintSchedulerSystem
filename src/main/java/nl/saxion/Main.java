@@ -21,7 +21,7 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
     private PrintingFacade printingFacade = new PrintingFacade();
 
-    private String printStrategy = "Less Spool Changes";
+    private PrintingStrategy printStrategy = new LessSpoolChangesStrategy();
 
     public static void main(String[] args) {
         new Main().run(args);
@@ -91,15 +91,15 @@ public class Main {
     // in the future strategy might be added.
     private void changePrintStrategy() {
         System.out.println("---------- Change Strategy -------------");
-        System.out.println("- Current strategy: " + printStrategy);
+        System.out.println("- Current strategy: " + printingFacade.getPrintingStrategy().toString());
         System.out.println("- 1: Less Spool Changes");
         System.out.println("- 2: Efficient Spool Usage");
         System.out.println("- Choose strategy: ");
         int strategyChoice = numberInput(1, 2);
         if(strategyChoice == 1) {
-            printStrategy = "- Less Spool Changes";
+            printingFacade.changePrintingStrategy(new LessSpoolChangesStrategy());
         } else if( strategyChoice == 2) {
-            printStrategy = "- Efficient Spool Usage";
+           printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
         }
         System.out.println("-----------------------------------");
     }
@@ -193,9 +193,11 @@ public class Main {
         List<FilamentType> filamentTypes = printingFacade.getFilamentTypes();
         System.out.println("---------- Filament Type ----------");
         int counter = 1;
-        filamentTypes.forEach(type -> {
-            System.out.println("- " + counter + ": " + type);
-        });
+        for (FilamentType filamentType : filamentTypes){
+            System.out.println("- " + counter + ": " + filamentType.name());
+            counter++;
+        }
+
 
         return filamentTypes;
     }
@@ -203,7 +205,7 @@ public class Main {
     public List<String> showAvailableColors(FilamentType filamentType) {
         List<String> availableColors = printingFacade.getAvailableColors(filamentType);
         System.out.println("---------- Colors ----------");
-        for (int i = 1; i <= availableColors.size(); i++) {
+        for (int i = 1; i < availableColors.size(); i++) {
             String colorString = availableColors.get(i);
             System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
         }

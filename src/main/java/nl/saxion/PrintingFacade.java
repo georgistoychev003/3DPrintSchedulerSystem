@@ -10,6 +10,7 @@ public class PrintingFacade implements IFacade{
 
     private DomainReader fileHandler;
 
+
     public PrintingFacade() {
         this.fileHandler = new JSONDomainReader();
     }
@@ -78,7 +79,15 @@ public class PrintingFacade implements IFacade{
             System.out.println("Not a valid filament type.");
             return null;
         }
-        return filamentTypes.get(filamentTypeNumber);
+        return filamentTypes.get(filamentTypeNumber-1);
+    }
+
+    public PrintingStrategy getPrintingStrategy() {
+        return getPrintTaskManager().getPrintingStrategy();
+    }
+
+    public void changePrintingStrategy(PrintingStrategy printingStrategy) {
+        getPrintTaskManager().changePrintingStrategy(printingStrategy);
     }
 
     @Override
