@@ -3,23 +3,15 @@ package nl.saxion;
 import nl.saxion.Models.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PrintingFacade implements IFacade{
 
-    private FileHandler fileHandler;
+    private DomainReader fileHandler;
 
     public PrintingFacade() {
-        this.fileHandler = new JSONAdapter();
+        this.fileHandler = new JSONDomainReader();
     }
 
     @Override
@@ -124,100 +116,27 @@ public class PrintingFacade implements IFacade{
 //    }
 
     @Override
-    public void readPrintsFromFile(String filename) {
-        if(filename.length() == 0) {
-            filename = "src/main/resources/prints.json";
-        }
-        try {
-            // Read the file using the adapter
-            JSONArray prints = (JSONArray) fileHandler.readFile(filename);
-
-            // Process the JSON array as before
-            for (Object p : prints) {
-                JSONObject print = (JSONObject) p;
-                String name = (String) print.get("name");
-                int height = ((Long) print.get("height")).intValue();
-                int width = ((Long) print.get("width")).intValue();
-                int length = ((Long) print.get("length")).intValue();
-                JSONArray fLength = (JSONArray) print.get("filamentLength");
-                int printTime = ((Long) print.get("printTime")).intValue();
-                ArrayList<Double> filamentLength = new ArrayList<>();
-                for(int i = 0; i < fLength.size(); i++) {
-                    filamentLength.add(((Double) fLength.get(i)));
-                }
-                getPrintManager().addPrint(name, height, width, length, filamentLength, printTime);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void readPrintersFromFile(String filename) {
+        List<Printer> printers = fileHandler.readPrinters();
+        for (Printer printer : printers) {
+            getPrinterManager().addPrinter(printer);
         }
     }
 
 
     @Override
-    public void readPrintersFromFile(String filename) {
-        if(filename.length() == 0) {
-            filename = "src/main/resources/printers.json";
-        }
-        try {
-            // Read the file using the adapter and cast the result
-            Object result = fileHandler.readFile(filename);
-            JSONArray printers = result instanceof JSONArray ? (JSONArray) result : new JSONArray();
-
-            // Process the JSON array as before
-            for (Object p : printers) {
-                JSONObject printer = (JSONObject) p;
-                int id = ((Long) printer.get("id")).intValue();
-                int type = ((Long) printer.get("type")).intValue();
-                String name = (String) printer.get("name");
-                String manufacturer = (String) printer.get("manufacturer");
-                int maxX = ((Long) printer.get("maxX")).intValue();
-                int maxY = ((Long) printer.get("maxY")).intValue();
-                int maxZ = ((Long) printer.get("maxZ")).intValue();
-                int maxColors = ((Long) printer.get("maxColors")).intValue();
-                getPrinterManager().addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void readPrintsFromFile(String filename) {
+        List<Print> prints = fileHandler.readPrints();
+        for (Print print : prints) {
+            getPrintManager().addPrint(print);
         }
     }
-
 
     @Override
     public void readSpoolsFromFile(String filename) {
-        if (filename.length() == 0) {
-            filename = "src/main/resources/spools.json";
-        }
-        try {
-            // Read the file using the adapter and cast the result
-            Object result = fileHandler.readFile(filename);
-            JSONArray spools = result instanceof JSONArray ? (JSONArray) result : new JSONArray();
-
-            // Process the JSON array as before
-            for (Object p : spools) {
-                JSONObject spool = (JSONObject) p;
-                int id = ((Long) spool.get("id")).intValue();
-                String color = (String) spool.get("color");
-                String filamentType = (String) spool.get("filamentType");
-                double length = (Double) spool.get("length");
-                FilamentType type;
-                switch (filamentType) {
-                    case "PLA":
-                        type = FilamentType.PLA;
-                        break;
-                    case "PETG":
-                        type = FilamentType.PETG;
-                        break;
-                    case "ABS":
-                        type = FilamentType.ABS;
-                        break;
-                    default:
-                        System.out.println("- Not a valid filamentType, bailing out");
-                        return;
-                }
-                getSpoolManager().addSpool(new Spool(id, color, type, length));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        List<Spool> spools = fileHandler.readSpools();
+        for (Spool spool : spools) {
+            getSpoolManager().addSpool(spool);
         }
     }
 

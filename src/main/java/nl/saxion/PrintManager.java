@@ -27,6 +27,12 @@ public class PrintManager {
         prints.add(p);
     }
 
+    public void addPrint(Print print) {
+        if (print != null) {
+            prints.add(print);
+        }
+    }
+
     public List<Print> getPrints() {
         return prints;
     }
