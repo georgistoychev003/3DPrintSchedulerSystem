@@ -63,14 +63,4 @@ public class PrinterManager {
         printers.remove(printer);
     }
 
-
-
-    //TODO: moved to PrintTaskManager!!!!
-    // this method currently needs to exist in both this and the PrintTaskManager class
-    private void printError(String s) {
-        System.out.println("---------- Error Message ----------");
-        System.out.println("Error: "+s);
-        System.out.println("--------------------------------------");
-    }
-
 }

@@ -11,9 +11,6 @@ public interface DomainReader {
     List<Printer> readPrinters();
     List<Print> readPrints();
     List<Spool> readSpools();
-    void writePrints(List<Print> prints);
-    void writePrinters(List<Printer> printers);
-    void writeSpools(List<Spool> spools);
 }
 
 

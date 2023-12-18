@@ -21,8 +21,6 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
     private PrintingFacade printingFacade = new PrintingFacade();
 
-    private PrintingStrategy printStrategy = new LessSpoolChangesStrategy();
-
     public static void main(String[] args) {
         new Main().run(args);
     }

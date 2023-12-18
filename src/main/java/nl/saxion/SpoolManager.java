@@ -37,6 +37,7 @@ public class SpoolManager {
     }
 
     // FIXME: code smell??? /// naming can be more meaningful as we search the spool from the color and not a name variable that does not exist in the spool class, also list could be replaced with spools
+    // FIXME: code smell // final inside method args?
     public boolean containsSpool(final List<Spool> list, final String name){
         return list.stream().anyMatch(o -> o.getColor().equals(name));
     }

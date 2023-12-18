@@ -22,10 +22,10 @@ public class PrintManager {
     }
 
     //FIXME: code smell // too many arguments / all can be replaced by a Print object
-    public void addPrint(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
-        Print p = new Print(name, height, width, length, filamentLength, printTime);
-        prints.add(p);
-    }
+//    public void addPrint(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
+//        Print p = new Print(name, height, width, length, filamentLength, printTime);
+//        prints.add(p);
+//    }
 
     public void addPrint(Print print) {
         if (print != null) {

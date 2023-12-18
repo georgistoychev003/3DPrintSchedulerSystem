@@ -14,13 +14,12 @@ public interface IFacade {
     Print findSelectedPrint(int printNumber);
     List<FilamentType> getFilamentTypes();
     FilamentType getSelectedFilamentType(int filamentTypeNumber, List<FilamentType> filamentTypes);
-    void printPrints();
     List<Print> getPrints();
     List<Spool> getSpools();
     List<Printer> getPrinters();
     List<PrintTask> getPendingPrintTasks();
     List<String> getAvailableColors(FilamentType filamentType);
-    PrintTask getCurrentTaskOfAPrinter(Printer p);
+    PrintTask getCurrentTaskOfAPrinter(Printer printer);
     void readPrintsFromFile(String filename);
     void readPrintersFromFile(String filename);
     void readSpoolsFromFile(String filename);

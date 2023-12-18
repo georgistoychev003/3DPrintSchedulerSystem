@@ -79,7 +79,12 @@ public class JSONDomainReader implements DomainReader {
             int maxColors = ((Long) printerJson.get("maxColors")).intValue();
 
             // Useing a ConcretePrinter instead of Printer as Printer is an abstract class
-            return new ConcretePrinter(id, name, manufacturer, maxX, maxY, maxZ, maxColors);
+            if(maxColors == 1){
+                return new StandardFDM(id, name, manufacturer, maxX, maxY, maxZ);
+            }else{
+                return new MultiColor(id, name, manufacturer, maxX, maxY, maxZ, maxColors);
+            }
+
         } catch (NullPointerException | ClassCastException e) {
             throw new PrinterDataException("Invalid printer data format: " + e.getMessage());
         }
@@ -131,20 +136,7 @@ public class JSONDomainReader implements DomainReader {
         }
     }
 
-    @Override
-    public void writePrints(List<Print> prints) {
 
-    }
-
-    @Override
-    public void writePrinters(List<Printer> printers) {
-
-    }
-
-    @Override
-    public void writeSpools(List<Spool> spools) {
-
-    }
 }
 
 

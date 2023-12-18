@@ -90,10 +90,6 @@ public class PrintingFacade implements IFacade{
         getPrintTaskManager().changePrintingStrategy(printingStrategy);
     }
 
-    @Override
-    public void printPrints() {
-
-    }
 
     @Override
     public List<Print> getPrints() {
@@ -111,8 +107,8 @@ public class PrintingFacade implements IFacade{
     }
 
     @Override
-    public PrintTask getCurrentTaskOfAPrinter(Printer p) {
-        return getPrintTaskManager().getPrinterCurrentTask(p);
+    public PrintTask getCurrentTaskOfAPrinter(Printer printer) {
+        return getPrintTaskManager().getPrinterCurrentTask(printer);
     }
 
     @Override

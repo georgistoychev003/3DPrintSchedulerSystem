@@ -51,10 +51,6 @@ public class Print {
         return width;
     }
 
-    public int getPrintTime() {
-        return printTime;
-    }
-
     public List<Double> getFilamentLength() {
         return filamentLength;
     }

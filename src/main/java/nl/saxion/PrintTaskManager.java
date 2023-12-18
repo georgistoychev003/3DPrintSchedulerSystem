@@ -109,6 +109,7 @@ public class PrintTaskManager {
         selectPrintTask(printer);
     }
     //FIXME: code smell // code repetition with the above method
+    //FIXME : code smell // name not concrete
     public void registerCompletion(int printerId) {
         Map.Entry<Printer, PrintTask> foundEntry = null;
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
@@ -143,22 +144,12 @@ public class PrintTaskManager {
         System.out.println("--------------------------------------");
     }
 
-    public Map<Printer, PrintTask> getRunningPrintTasks() {
-        return runningPrintTasks;
-    }
-    public void addPendingPrintTask(PrintTask printTask) {
-        pendingPrintTasks.add(printTask);
-    }
 
     public void addRunningPrintTask(Printer printer, PrintTask printTask){
         runningPrintTasks.put(printer, printTask);
     }
     public void removePendingPrintTask(PrintTask printTask) {
         pendingPrintTasks.remove(printTask);
-    }
-
-    public void removeRunningPrintTask(PrintTask printTask){
-        runningPrintTasks.remove(printTask);
     }
 
     public PrintingStrategy getPrintingStrategy() {
