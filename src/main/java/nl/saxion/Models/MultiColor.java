@@ -18,11 +18,34 @@ public class MultiColor extends StandardFDM {
         this.maxColors = maxColors;
     }
 
+//    public void setCurrentSpools(List<Spool> spools) {
+//        setCurrentSpool(spools.get(0));
+//        if(spools.size() > 1) spool2 = spools.get(1);
+//        if(spools.size() > 2) spool3 = spools.get(2);
+//        if(spools.size() > 3) spool4 = spools.get(3);
+//    }
+
     public void setCurrentSpools(List<Spool> spools) {
-        setCurrentSpool(spools.get(0));
-        if(spools.size() > 1) spool2 = spools.get(1);
-        if(spools.size() > 2) spool3 = spools.get(2);
-        if(spools.size() > 3) spool4 = spools.get(3);
+        boolean spoolChanged = false;
+        if (this.getCurrentSpool() != spools.get(0)) {
+            setCurrentSpool(spools.get(0));
+            spoolChanged = true;
+        }
+        if (spools.size() > 1 && spool2 != spools.get(1)) {
+            spool2 = spools.get(1);
+            spoolChanged = true;
+        }
+        if (spools.size() > 2 && spool3 != spools.get(2)) {
+            spool3 = spools.get(2);
+            spoolChanged = true;
+        }
+        if (spools.size() > 3 && spool4 != spools.get(3)) {
+            spool4 = spools.get(3);
+            spoolChanged = true;
+        }
+        if (spoolChanged) {
+            notifyObservers("spoolChange", spools); // Notify observers of the spool change
+        }
     }
     //FIXME the value of spools is hardcoded-magic numbers
 
@@ -41,19 +64,19 @@ public class MultiColor extends StandardFDM {
     public String toString() {
         String result = super.toString();
         String[] resultArray = result.split("- ");
-        String spools = resultArray[resultArray.length-1];
-        if(spool2 != null) {
+        String spools = resultArray[resultArray.length - 1];
+        if (spool2 != null) {
             spools = spools.replace(System.lineSeparator(), ", " + spool2.getId() + System.lineSeparator());
         }
-        if(spool3 != null) {
+        if (spool3 != null) {
             spools = spools.replace(System.lineSeparator(), ", " + spool3.getId() + System.lineSeparator());
         }
-        if(spool4 != null) {
+        if (spool4 != null) {
             spools = spools.replace(System.lineSeparator(), ", " + spool4.getId() + System.lineSeparator());
         }
         spools = spools.replace("--------", "- maxColors: " + maxColors + System.lineSeparator() +
-               "--------");
-        resultArray[resultArray.length-1] = spools;
+                "--------");
+        resultArray[resultArray.length - 1] = spools;
         result = String.join("- ", resultArray);
 
         return result;

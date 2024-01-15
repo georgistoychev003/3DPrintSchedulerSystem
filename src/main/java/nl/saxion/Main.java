@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class Main {
     Scanner scanner = new Scanner(System.in);
     private PrintingFacade printingFacade = new PrintingFacade();
+    private Dashboard dashboard = new Dashboard();
 
     public static void main(String[] args) {
         new Main().run(args);
@@ -35,10 +36,15 @@ public class Main {
             printingFacade.readSpoolsFromFile("");
             printingFacade.readPrintersFromFile("");
         }
+
+        // Register the dashboard with each printer
+        for (Printer printer : printingFacade.getPrinters()) {
+            printer.registerObserver(dashboard);
+        }
         int choice = 1;
-        while (choice > 0 && choice < 10) {
+        while (choice > 0 && choice < 11) {
             menu();
-            choice = menuChoice(9);
+            choice = menuChoice(10);
             System.out.println("-----------------------------------");
             if (choice == 1) {
                 addNewPrintTask();
@@ -60,6 +66,8 @@ public class Main {
                 showSpools();
             } else if (choice == 9) {
                 showPendingPrintTasks();
+            } else if (choice == 10) {
+                showDashboardStats();
             }
         }
         exit();
@@ -76,6 +84,8 @@ public class Main {
         System.out.println("- 7) Show printers");
         System.out.println("- 8) Show spools");
         System.out.println("- 9) Show pending print tasks");
+        System.out.println("- 10) Show dashboard stats of : Total number of times a spool is changed\n" +
+                "- Total number of prints that are done");
         System.out.println("- 0) Exit");
 
     }
@@ -242,6 +252,9 @@ public class Main {
         }
         System.out.println("--------------------------------------");
         return colors;
+    }
+    private void showDashboardStats() {
+        dashboard.displayStats();
     }
 
 

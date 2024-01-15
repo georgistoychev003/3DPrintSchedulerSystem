@@ -8,11 +8,13 @@ import java.util.*;
 
 public class PrintingFacade implements IFacade{
 
-    private DomainReader fileHandler;
+    private DomainReader jsonFileHandler;
+    private DomainReader csvFileHandler;
 
 
     public PrintingFacade() {
-        this.fileHandler = new JSONDomainReader();
+        this.jsonFileHandler = new JSONDomainReader();
+        this.csvFileHandler = new CSVDomainReader();
     }
 
     @Override
@@ -122,7 +124,7 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public void readPrintersFromFile(String filename) {
-        List<Printer> printers = fileHandler.readPrinters();
+        List<Printer> printers = jsonFileHandler.readPrinters();
         for (Printer printer : printers) {
             getPrinterManager().addPrinter(printer);
         }
@@ -131,15 +133,23 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public void readPrintsFromFile(String filename) {
-        List<Print> prints = fileHandler.readPrints();
+        List<Print> prints = jsonFileHandler.readPrints();
         for (Print print : prints) {
             getPrintManager().addPrint(print);
         }
     }
 
+//    @Override
+//    public void readSpoolsFromFile(String filename) {
+//        List<Spool> spools = fileHandler.readSpools();
+//        for (Spool spool : spools) {
+//            getSpoolManager().addSpool(spool);
+//        }
+//    }
+
     @Override
     public void readSpoolsFromFile(String filename) {
-        List<Spool> spools = fileHandler.readSpools();
+        List<Spool> spools = csvFileHandler.readSpools();
         for (Spool spool : spools) {
             getSpoolManager().addSpool(spool);
         }

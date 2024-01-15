@@ -25,7 +25,14 @@ public class StandardFDM extends Printer {
     }
 
     public void setCurrentSpool(Spool spool) {
-        this.currentSpool = spool;
+        if(this.currentSpool != spool) {
+            this.currentSpool = spool;
+            notifyObservers("spoolChange", spool); // Notify observers of the spool change
+        }
+    }
+
+    public void onPrintComplete() {
+        notifyObservers("printComplete", null); // notify subscribers when a print job is completed
     }
 
     public boolean isHoused() {

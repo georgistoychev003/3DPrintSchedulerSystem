@@ -122,13 +122,21 @@ public class PrintTaskManager {
             printError("cannot find a running task on printer with ID " + printerId);
             return;
         }
+//        PrintTask task = foundEntry.getValue();
+//        runningPrintTasks.remove(foundEntry.getKey());
+        Printer printer = foundEntry.getKey();
         PrintTask task = foundEntry.getValue();
-        runningPrintTasks.remove(foundEntry.getKey());
+
+        // Notify the printer that the print task is complete
+        printer.onPrintComplete();
+
+        // Removing the completed task
+        runningPrintTasks.remove(printer);
 
         System.out.println("Task " + task + " removed from printer "
                 + foundEntry.getKey().getName());
 
-        Printer printer = foundEntry.getKey();
+//        Printer printer = foundEntry.getKey();
         Spool[] spools = printer.getCurrentSpools();
         for(int i=0; i<spools.length && i < task.getColors().size();i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));

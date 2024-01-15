@@ -15,9 +15,9 @@ import java.util.List;
 public class JSONDomainReader implements DomainReader {
 
     private JSONParser jsonParser = new JSONParser();
-    private String printersFilename = "src/main/resources/printers.json";
-    private String printsFilename = "src/main/resources/prints.json";
-    private String spoolsFilename = "src/main/resources/spools.json";
+    private String printersFilename;
+    private String printsFilename;
+    private String spoolsFilename;
 
 
     public JSONDomainReader() {
@@ -89,8 +89,6 @@ public class JSONDomainReader implements DomainReader {
             throw new PrinterDataException("Invalid printer data format: " + e.getMessage());
         }
     }
-
-
 
     private Print convertJsonToPrint(JSONObject printJson) {
         String name = (String) printJson.get("name");
