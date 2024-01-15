@@ -71,8 +71,10 @@ public abstract class StrategyUtilities {
     private PrintTask getStandardFDMPrintTask(Printer printer, PrintTask chosenTask, PrintTask printTask) {
         Spool chosenSpool = null;
         for (Spool spool : getSpoolManager().getFreeSpools()) {
-            if (spool.spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
-                chosenSpool = spool;
+            if (spool != null){
+                if (spool.spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
+                    chosenSpool = spool;
+                }
             }
         }
         if (chosenSpool != null) {

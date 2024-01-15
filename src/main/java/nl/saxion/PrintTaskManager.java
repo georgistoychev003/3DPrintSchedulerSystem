@@ -138,8 +138,10 @@ public class PrintTaskManager {
 
 //        Printer printer = foundEntry.getKey();
         Spool[] spools = printer.getCurrentSpools();
-        for(int i=0; i<spools.length && i < task.getColors().size();i++) {
-            spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
+        for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
+            if (spools[i] != null) {
+                spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
+            }
         }
         selectPrintTask(printer);
 

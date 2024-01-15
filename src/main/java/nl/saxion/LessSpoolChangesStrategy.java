@@ -9,7 +9,7 @@ public class LessSpoolChangesStrategy extends StrategyUtilities implements Print
 
     public void selectPrintTask(Printer printer) {
         Spool[] spools = printer.getCurrentSpools();
-        System.out.println("Spools array: " + Arrays.toString(spools));
+//        System.out.println("Spools array: " + Arrays.toString(spools));
         PrintTask chosenTask = null;
         // First we look if there's a task that matches the current spool on the printer.
         if(spools[0] != null) {

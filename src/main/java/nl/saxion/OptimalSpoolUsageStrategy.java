@@ -9,10 +9,11 @@ import java.util.List;
 public class OptimalSpoolUsageStrategy extends StrategyUtilities implements PrintingStrategy{
     @Override
     public void selectPrintTask(Printer printer) {
-        Spool[] spools = printer.getCurrentSpools();
-        System.out.println("Lng: " + spools.length);
-        System.out.println("Spools array: " + Arrays.toString(spools));
-        if (spools != null) {
+//        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = getSpoolManager().getFreeSpools().toArray(new Spool[0]);
+//        System.out.println("Lng: " + spools.length);
+//        System.out.println("Spools array: " + Arrays.toString(spools));
+        if (spools != null && spools.length > 0) {
 
             // Find the spool with the least filament left.
             Spool spool = Arrays.stream(spools)

@@ -127,6 +127,7 @@ public class PrintingFacade implements IFacade{
         List<Printer> printers = jsonFileHandler.readPrinters();
         for (Printer printer : printers) {
             getPrinterManager().addPrinter(printer);
+//            getPrinterManager().addFreePrinter(printer);
         }
     }
 
@@ -151,7 +152,7 @@ public class PrintingFacade implements IFacade{
     public void readSpoolsFromFile(String filename) {
         List<Spool> spools = csvFileHandler.readSpools();
         for (Spool spool : spools) {
-            getSpoolManager().addSpool(spool);
+            getSpoolManager().addNewSpool(spool);
         }
     }
 
