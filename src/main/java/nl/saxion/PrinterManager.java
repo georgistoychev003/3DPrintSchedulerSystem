@@ -26,24 +26,11 @@ public class PrinterManager {
     //FIXME: reduce addPrinter method args (create a class to pass or
     // FIXME: code smell / too many arguments / method can be reduced and simplified by substituing half of the args with a Printer object which can also make the method shorter
     public void addPrinter(int id, int printerType, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
-        // Factory pattern implemented // remove commented code after confirmation
         Printer newPrinter = PrinterFactory.createPrinterInstance(id,printerType, printerName, manufacturer, maxX, maxY, maxZ, maxColors);
         if (newPrinter != null) {
             printers.add(newPrinter);
             freePrinters.add(newPrinter);
         }
-//        if (printerType == 1 || printerType == 2) {
-//            StandardFDM printer = new StandardFDM(id, printerName, manufacturer, maxX, maxY, maxZ);
-//            if (printerType == 2) {
-//                printer.setHoused(true);
-//            }
-//            printers.add(printer);
-//            freePrinters.add(printer);
-//        } else if (printerType == 3) {
-//            MultiColor printer = new MultiColor(id, printerName, manufacturer, maxX, maxY, maxZ, maxColors);
-//            printers.add(printer);
-//            freePrinters.add(printer);
-//        }
     }
 
 

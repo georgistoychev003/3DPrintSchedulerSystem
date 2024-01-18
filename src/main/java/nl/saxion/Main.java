@@ -94,9 +94,6 @@ public class Main {
 
     }
 
-    // This method only changes the name but does not actually work.
-    // It exists to demonstrate the output.
-    // in the future strategy might be added.
     private void changePrintStrategy() {
         System.out.println("---------- Change Strategy -------------");
         System.out.println("- Current strategy: " + printingFacade.getPrintingStrategy().toString());
@@ -213,8 +210,8 @@ public class Main {
     public List<String> showAvailableColors(FilamentType filamentType) {
         List<String> availableColors = printingFacade.getAvailableColors(filamentType);
         System.out.println("---------- Colors ----------");
-        for (int i = 1; i < availableColors.size(); i++) {
-            String colorString = availableColors.get(i);
+        for (int i = 1; i <= availableColors.size(); i++) {
+            String colorString = availableColors.get(i-1);
             System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
         }
 
