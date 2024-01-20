@@ -160,7 +160,13 @@ public class PrintingFacade implements IFacade{
         }
     }
 
+    public void initializeDashboardObserver() {
+        getPrinterManager().initializeDashboard();
+    }
 
+    public void displayDashboardStats() {
+        getPrinterManager().displayDashboardStats();
+    }
     private PrinterManager getPrinterManager() {
         return PrinterManager.getInstance();
     }

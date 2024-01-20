@@ -20,27 +20,25 @@ import java.util.stream.Collectors;
 public class Main {
     Scanner scanner = new Scanner(System.in);
     private PrintingFacade printingFacade = new PrintingFacade();
-    private Dashboard dashboard = new Dashboard();
+
 
     public static void main(String[] args) {
         new Main().run(args);
     }
 
     public void run(String[] args) {
-        if(args.length > 0) {
+        if (args.length > 0) {
             printingFacade.readPrintsFromFile(args[0]);
             printingFacade.readSpoolsFromFile(args[1]);
-           printingFacade.readPrintersFromFile(args[2]);
+            printingFacade.readPrintersFromFile(args[2]);
         } else {
-           printingFacade.readPrintsFromFile("");
+            printingFacade.readPrintsFromFile("");
             printingFacade.readSpoolsFromFile("");
             printingFacade.readPrintersFromFile("");
         }
+        // Initialize the dashboard observer
+        printingFacade.initializeDashboardObserver();
 
-        // Register the dashboard with each printer
-        for (Printer printer : printingFacade.getPrinters()) {
-            printer.registerObserver(dashboard);
-        }
         int choice = 1;
         while (choice > 0 && choice < 11) {
             menu();
@@ -101,10 +99,10 @@ public class Main {
         System.out.println("- 2: Efficient Spool Usage");
         System.out.println("- Choose strategy: ");
         int strategyChoice = numberInput(1, 2);
-        if(strategyChoice == 1) {
+        if (strategyChoice == 1) {
             printingFacade.changePrintingStrategy(new LessSpoolChangesStrategy());
-        } else if( strategyChoice == 2) {
-           printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
+        } else if (strategyChoice == 2) {
+            printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
         }
         System.out.println("-----------------------------------");
     }
@@ -141,7 +139,9 @@ public class Main {
 
         //Select filament type
         FilamentType type = selectFilamentType();
-        if (type == null){return;}
+        if (type == null) {
+            return;
+        }
 
         //Select available colors
         List<String> colors = selectColors(type, print);
@@ -176,7 +176,7 @@ public class Main {
         for (Printer p : printers) {
             String output = p.toString();
             PrintTask currentTask = printingFacade.getCurrentTaskOfAPrinter(p);
-            if(currentTask != null) {
+            if (currentTask != null) {
                 output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
                         "--------");
             }
@@ -198,7 +198,7 @@ public class Main {
         List<FilamentType> filamentTypes = printingFacade.getFilamentTypes();
         System.out.println("---------- Filament Type ----------");
         int counter = 1;
-        for (FilamentType filamentType : filamentTypes){
+        for (FilamentType filamentType : filamentTypes) {
             System.out.println("- " + counter + ": " + filamentType.name());
             counter++;
         }
@@ -211,7 +211,7 @@ public class Main {
         List<String> availableColors = printingFacade.getAvailableColors(filamentType);
         System.out.println("---------- Colors ----------");
         for (int i = 1; i <= availableColors.size(); i++) {
-            String colorString = availableColors.get(i-1);
+            String colorString = availableColors.get(i - 1);
             System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
         }
 
@@ -240,18 +240,19 @@ public class Main {
         List<String> availableColors = showAvailableColors(type);
         System.out.print("- Color number: ");
         int colorChoice = numberInput(1, availableColors.size());
-        colors.add(availableColors.get(colorChoice-1));
+        colors.add(availableColors.get(colorChoice - 1));
 
-        for(int i = 1; i < print.getFilamentLength().size(); i++) {
+        for (int i = 1; i < print.getFilamentLength().size(); i++) {
             System.out.print("- Color number: ");
             colorChoice = numberInput(1, availableColors.size());
-            colors.add(availableColors.get(colorChoice-1));
+            colors.add(availableColors.get(colorChoice - 1));
         }
         System.out.println("--------------------------------------");
         return colors;
     }
+
     private void showDashboardStats() {
-        dashboard.displayStats();
+        printingFacade.displayDashboardStats();
     }
 
 
@@ -274,7 +275,7 @@ public class Main {
 
     public String stringInput() {
         String input = null;
-        while(input == null || input.length() == 0){
+        while (input == null || input.length() == 0) {
             input = scanner.nextLine();
         }
         return input;

@@ -1,6 +1,7 @@
 package nl.saxion;
 
 import nl.saxion.Models.*;
+import nl.saxion.Models.Observer;
 import org.json.simple.JSONArray;
 
 import java.util.*;
@@ -13,6 +14,7 @@ public class PrinterManager {
     private static PrinterManager instance;
     private List<Printer> printers = new ArrayList<Printer>(); //TODO use interface
     private List<Printer> freePrinters = new ArrayList<>();
+    private Dashboard dashboard = new Dashboard();
 
 
 
@@ -33,8 +35,15 @@ public class PrinterManager {
         }
     }
 
+    public void initializeDashboard() {
+        for (Printer printer : printers) {
+            printer.registerObserver(dashboard);
+        }
+    }
 
-
+    public void displayDashboardStats() {
+        dashboard.displayStats();
+    }
 
     public List<Printer> getPrinters() {
         return printers;

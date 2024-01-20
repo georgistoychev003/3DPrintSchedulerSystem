@@ -95,5 +95,24 @@ public class PrintingTests {
         printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
         assertEquals(new OptimalSpoolUsageStrategy().toString() ,printingFacade.getPrintingStrategy().toString());
     }
+    @Test
+    public void addingPrintTaskWithInvalidFilamentTypeFails() {
+        Print print = printingFacade.getPrints().get(0);
+        printingFacade.createPrintTask(print.getName(), List.of("Red"), null); //null for filament type
+        assertTrue(printingFacade.getPendingPrintTasks().isEmpty());
+    }
 
+    //Test for Concurrent Print Task Handling
+    @Test
+    public void handlingMultipleConcurrentPrintTasks() {
+        Print print1 = printingFacade.getPrints().get(0);
+        Print print2 = printingFacade.getPrints().get(1);
+
+        printingFacade.createPrintTask(print1.getName(), List.of("Red"), FilamentType.PLA);
+        printingFacade.createPrintTask(print2.getName(), List.of("Blue"), FilamentType.ABS);
+
+        printingFacade.startPrintQueue();
+        assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
+        assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(1)));
+    }
 }
