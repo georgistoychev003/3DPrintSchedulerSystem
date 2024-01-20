@@ -118,6 +118,10 @@ public class PrintingFacade implements IFacade{
         return getPrintTaskManager().getPendingPrintTasks();
     }
 
+    public void removePendingPrintTask(PrintTask printTask) {
+        getPrintTaskManager().removePendingPrintTask(printTask);
+    }
+
 //    public List<PrinterDTO> getPrinters() {
 //        return getPrinterManager().getPrinters().stream().map(p -> p.asDTO()).collect(Collectors.toList());
 //    }

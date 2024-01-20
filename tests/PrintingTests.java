@@ -1,0 +1,99 @@
+import nl.saxion.Models.*;
+import nl.saxion.OptimalSpoolUsageStrategy;
+import nl.saxion.PrintingFacade;
+import org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+public class PrintingTests {
+
+    private PrintingFacade printingFacade;
+    @BeforeEach
+    public void createPrintingFacade() {
+        printingFacade = new PrintingFacade();
+        printingFacade.readPrintsFromFile("resources/prints.json");
+        printingFacade.readSpoolsFromFile("resources/spools.csv");
+        printingFacade.readPrintersFromFile("resources/printers.json");
+    }
+
+    @Test
+    public void gettingAllPrintsReturnsAListOfPrints() {
+        List<Print> prints = printingFacade.getPrints();
+        assertFalse(prints.isEmpty());
+    }
+    @Test
+    public void gettingAllPrintersReturnsAListOfPrinters() {
+        List<Printer> printers = printingFacade.getPrinters();
+        assertFalse(printers.isEmpty());
+    }
+    @Test
+    public void gettingAllSpoolsReturnsAListOfSpools() {
+        List<Spool> spools = printingFacade.getSpools();
+        assertFalse(spools.isEmpty());
+    }
+
+    @Test
+    public void addingAPrintTaskProvidingCorrectParametersIsSuccessful() {
+        Print print = printingFacade.getPrints().get(0);
+        printingFacade.createPrintTask(print.getName(), List.of("Red"), FilamentType.PLA);
+        List<PrintTask> printTasks =  printingFacade.getPendingPrintTasks();
+        assertNotNull(printTasks.get(0));
+        assertTrue(printTasks.get(0).toString().contains(print.getName()));
+
+        printingFacade.removePendingPrintTask(printTasks.get(0));
+    }
+
+    @Test
+    public void startingPrintProcessOfAPrintTaskIsSuccessfulAndCompletingIt() {
+        Print print = printingFacade.getPrints().get(0);
+        printingFacade.createPrintTask(print.getName(), List.of("Red"), FilamentType.PLA);
+        printingFacade.startPrintQueue();
+        PrintTask printTask = printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0));
+        assertEquals(print.getName(), printTask.getPrint().getName());
+
+        printingFacade.registerSucceededPrinter(printingFacade.getPrinters().get(0).getId());
+
+        assertNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
+    }
+
+    @Test
+    public void startingPrintProcessOfAPrintTaskAndRegisterPrinterFailure() {
+        Print print = printingFacade.getPrints().get(0);
+        printingFacade.createPrintTask(print.getName(), List.of("Red"), FilamentType.PLA);
+        printingFacade.startPrintQueue();
+        PrintTask printTask = printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0));
+        assertEquals(print.getName(), printTask.getPrint().getName());
+
+        printingFacade.registerFailedPrinter(printingFacade.getPrinters().get(0).getId());
+
+        //Task tries to run again on the printer
+        assertEquals(print.getName(), printTask.getPrint().getName());
+    }
+
+    @Test
+    public void addingAPrintTaskUsingAPrintNameThatDoesNotExistDoesNotAddAPrintTask() {
+        printingFacade.createPrintTask("I do not exist", List.of("Red"), FilamentType.PLA);
+        System.out.println(printingFacade.getPendingPrintTasks());
+        assertTrue(printingFacade.getPendingPrintTasks().isEmpty());
+    }
+
+    @Test
+    public void addingAPrintTaskUsingEmptyListOfColorsDoesNotAddAPrintTask() {
+        Print print = printingFacade.getPrints().get(0);
+        printingFacade.createPrintTask(print.getName(), List.of(), FilamentType.PLA);
+        System.out.println(printingFacade.getPendingPrintTasks());
+        assertTrue(printingFacade.getPendingPrintTasks().isEmpty());
+    }
+
+    @Test
+    public void changingPrintingStrategySuccessful() {
+        printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
+        assertEquals(new OptimalSpoolUsageStrategy().toString() ,printingFacade.getPrintingStrategy().toString());
+    }
+
+}
