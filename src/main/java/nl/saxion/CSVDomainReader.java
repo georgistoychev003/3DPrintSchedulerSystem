@@ -8,8 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CSVDomainReader implements DomainReader {
-
+    private static CSVDomainReader instance;
     private String spoolsFilename = "src/main/resources/spools.csv";
+
+    private CSVDomainReader() {
+    }
+    public static synchronized CSVDomainReader getInstance() {
+        if (instance == null) {
+            instance = new CSVDomainReader();
+        }
+        return instance;
+    }
 
     @Override
     public List<Printer> readPrinters() {
@@ -21,6 +30,10 @@ public class CSVDomainReader implements DomainReader {
     public List<Print> readPrints() {
         //we have no csv for the prints
         return new ArrayList<>();
+    }
+    @Override
+    public boolean supportsFileType(String filename) {
+        return filename.endsWith(".csv");
     }
 
 

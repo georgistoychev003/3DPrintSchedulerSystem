@@ -6,13 +6,7 @@ import java.util.*;
 
 public class PrintingFacade implements IFacade{
 
-    private DomainReader jsonFileHandler;
-    private DomainReader csvFileHandler;
-
-
     public PrintingFacade() {
-        this.jsonFileHandler = new JSONDomainReader();
-        this.csvFileHandler = new CSVDomainReader();
     }
 
     @Override
@@ -116,37 +110,17 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public void readPrintersFromFile(String filename) {
-        List<Printer> printers = jsonFileHandler.readPrinters();
-        for (Printer printer : printers) {
-            getPrinterManager().addPrinter(printer);
-            getPrinterManager().addFreePrinter(printer);
-        }
+        getPrinterManager().readPrintersFromFile(filename);
     }
-
-
     @Override
     public void readPrintsFromFile(String filename) {
-        List<Print> prints = jsonFileHandler.readPrints();
-        for (Print print : prints) {
-            getPrintManager().addPrint(print);
-        }
+        getPrintManager().readPrintsFromFile(filename);
     }
-
-//    @Override
-//    public void readSpoolsFromFile(String filename) {
-//        List<Spool> spools = fileHandler.readSpools();
-//        for (Spool spool : spools) {
-//            getSpoolManager().addSpool(spool);
-//        }
-//    }
-
     @Override
     public void readSpoolsFromFile(String filename) {
-        List<Spool> spools = csvFileHandler.readSpools();
-        for (Spool spool : spools) {
-            getSpoolManager().addNewSpool(spool);
-        }
+        getSpoolManager().readSpoolsFromFile(filename);
     }
+
 
     public void initializeDashboardObserver() {
         getPrinterManager().initializeDashboard();

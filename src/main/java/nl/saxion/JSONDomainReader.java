@@ -13,21 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JSONDomainReader implements DomainReader {
-
+    private static JSONDomainReader instance;
     private JSONParser jsonParser = new JSONParser();
-    private String printersFilename;
-    private String printsFilename;
-    private String spoolsFilename;
-
-
-    public JSONDomainReader() {
-        // Setting the default file paths here
-        this.printersFilename = "src/main/resources/printers.json";
-        this.printsFilename = "src/main/resources/prints.json";
-        this.spoolsFilename = "src/main/resources/spools.json";
+    private String printersFilename = "src/main/resources/printers.json";
+    private String printsFilename = "src/main/resources/prints.json";
+    private String spoolsFilename = "src/main/resources/spools.json";
+    private JSONDomainReader() {
     }
 
-
+    public static synchronized JSONDomainReader getInstance() {
+        if (instance == null) {
+            instance = new JSONDomainReader();
+        }
+        return instance;
+    }
     @Override
     public List<Printer> readPrinters() {
         JSONArray printersJson = readJsonArrayFromFile(printersFilename);
@@ -120,6 +119,10 @@ public class JSONDomainReader implements DomainReader {
         }
 
         return new Spool(id, color, filamentType, length);
+    }
+    @Override
+    public boolean supportsFileType(String filename) {
+        return filename.endsWith(".json");
     }
 
 

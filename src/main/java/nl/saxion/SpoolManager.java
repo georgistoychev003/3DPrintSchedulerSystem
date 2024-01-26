@@ -42,6 +42,36 @@ public class SpoolManager {
         return list.stream().anyMatch(o -> o.getColor().equals(name));
     }
 
+    public void readSpoolsFromFile(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            System.out.println("No filename provided for reading spools.");
+            return;
+        }
+
+        DomainReader fileHandler;
+        if (getJsonFileHandler().supportsFileType(filename)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(filename)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + filename);
+            return;
+        }
+
+        List<Spool> spoolsFromFile = fileHandler.readSpools();
+        for (Spool spool : spoolsFromFile) {
+            addNewSpool(spool);
+        }
+    }
+
+    private DomainReader getJsonFileHandler() {
+        return JSONDomainReader.getInstance();
+    }
+
+    private DomainReader getCsvFileHandler() {
+        return CSVDomainReader.getInstance();
+    }
+
     public void addNewSpool(Spool spool) {
         spools.add(spool);
         freeSpools.add(spool);

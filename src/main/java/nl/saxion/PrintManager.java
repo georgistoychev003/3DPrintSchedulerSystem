@@ -1,6 +1,7 @@
 package nl.saxion;
 
 import nl.saxion.Models.Print;
+import nl.saxion.Models.Printer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,35 @@ public class PrintManager {
         if (print != null) {
             prints.add(print);
         }
+    }
+    public void readPrintsFromFile(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            System.out.println("No filename provided for reading prints.");
+            return;
+        }
+
+        DomainReader fileHandler;
+        if (getJsonFileHandler().supportsFileType(filename)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(filename)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + filename);
+            return;
+        }
+
+        List<Print> printsFromFile = fileHandler.readPrints();
+        for (Print print : printsFromFile) {
+            addPrint(print);
+        }
+    }
+
+    private DomainReader getJsonFileHandler() {
+        return JSONDomainReader.getInstance();
+    }
+
+    private DomainReader getCsvFileHandler() {
+        return CSVDomainReader.getInstance();
     }
 
     public List<Print> getPrints() {

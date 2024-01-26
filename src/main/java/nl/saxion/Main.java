@@ -32,9 +32,9 @@ public class Main {
             printingFacade.readSpoolsFromFile(args[1]);
             printingFacade.readPrintersFromFile(args[2]);
         } else {
-            printingFacade.readPrintsFromFile("");
-            printingFacade.readSpoolsFromFile("");
-            printingFacade.readPrintersFromFile("");
+            printingFacade.readPrintsFromFile("src/main/resources/prints.json");
+            printingFacade.readSpoolsFromFile("src/main/resources/spools.csv");
+            printingFacade.readPrintersFromFile("src/main/resources/printers.json");
         }
         // Initialize the dashboard observer
         printingFacade.initializeDashboardObserver();

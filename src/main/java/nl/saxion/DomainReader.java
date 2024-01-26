@@ -11,6 +11,7 @@ public interface DomainReader {
     List<Printer> readPrinters();
     List<Print> readPrints();
     List<Spool> readSpools();
+    boolean supportsFileType(String filename);
 }
 
 

@@ -41,6 +41,35 @@ public class PrinterManager {
         }
     }
 
+    public void readPrintersFromFile(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            System.out.println("No filename provided for reading printers.");
+            return;
+        }
+
+        DomainReader fileHandler;
+        if (getJsonFileHandler().supportsFileType(filename)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(filename)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + filename);
+            return;
+        }
+
+        List<Printer> printersFromFile = fileHandler.readPrinters();
+        for (Printer printer : printersFromFile) {
+            addPrinter(printer);
+        }
+    }
+    private DomainReader getJsonFileHandler() {
+        return JSONDomainReader.getInstance();
+    }
+
+    private DomainReader getCsvFileHandler() {
+        return CSVDomainReader.getInstance();
+    }
+
     public void displayDashboardStats() {
         dashboard.displayStats();
     }
