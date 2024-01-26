@@ -1,15 +1,18 @@
+import nl.saxion.LessSpoolChangesStrategy;
 import nl.saxion.Models.*;
 import nl.saxion.OptimalSpoolUsageStrategy;
 import nl.saxion.PrintingFacade;
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class PrintingTests {
 
     private PrintingFacade printingFacade;
@@ -19,6 +22,10 @@ public class PrintingTests {
         printingFacade.readPrintsFromFile("resources/prints.json");
         printingFacade.readSpoolsFromFile("resources/spools.csv");
         printingFacade.readPrintersFromFile("resources/printers.json");
+    }
+
+    public void selectFirstPrintingStrategy() {
+        printingFacade.changePrintingStrategy(new LessSpoolChangesStrategy());
     }
 
     @Test
@@ -94,6 +101,8 @@ public class PrintingTests {
     public void changingPrintingStrategySuccessful() {
         printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
         assertEquals(new OptimalSpoolUsageStrategy().toString() ,printingFacade.getPrintingStrategy().toString());
+
+        selectFirstPrintingStrategy();
     }
     @Test
     public void addingPrintTaskWithInvalidFilamentTypeFails() {
@@ -114,5 +123,50 @@ public class PrintingTests {
         printingFacade.startPrintQueue();
         assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
         assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(1)));
+
+        printingFacade.registerSucceededPrinter(1);
+        printingFacade.registerSucceededPrinter(2);
     }
+
+    @Test
+    public void creatingAndStartingAPrintTaskWithOptimalSpoolUsageStrategy() {
+        printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
+
+        Print print = printingFacade.getPrints().get(0);
+        printingFacade.createPrintTask(print.getName(), List.of("Red"), FilamentType.PLA);
+        printingFacade.startPrintQueue();
+        PrintTask printTask = printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0));
+        assertEquals(print.getName(), printTask.getPrint().getName());
+
+        printingFacade.registerSucceededPrinter(printingFacade.getPrinters().get(0).getId());
+
+        assertNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
+
+        selectFirstPrintingStrategy();
+    }
+
+    @Test
+    public void creatingAndStartingMultiplePrintTasksWithOptimalSpoolUsageStrategy() {
+        printingFacade.changePrintingStrategy(new OptimalSpoolUsageStrategy());
+
+        Print print1 = printingFacade.getPrints().get(0);
+        Print print2 = printingFacade.getPrints().get(1);
+
+        printingFacade.createPrintTask(print1.getName(), List.of("Red"), FilamentType.PLA);
+        printingFacade.createPrintTask(print2.getName(), List.of("Blue"), FilamentType.PLA);
+
+        printingFacade.startPrintQueue();
+        assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
+        assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(1)));
+
+        printingFacade.registerSucceededPrinter(1);
+        printingFacade.registerSucceededPrinter(2);
+
+        assertNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
+        assertNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(1)));
+
+        selectFirstPrintingStrategy();
+    }
+
+
 }

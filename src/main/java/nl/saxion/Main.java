@@ -110,7 +110,9 @@ public class Main {
     // TODO: This should be based on which printer is finished printing.
     private void registerPrintCompletion() {
         //Print running printers
-        int numberOfRunningPrinters = printingFacade.printCurrentlyRunningPrinters();
+        List<Printer> runningPrinters = printingFacade.printCurrentlyRunningPrinters();
+        int numberOfRunningPrinters = runningPrinters.size();
+        printRunningPrinters(runningPrinters);
 
         System.out.print("- Printer that is done (ID): ");
         int printerId = numberInput(-1, numberOfRunningPrinters);
@@ -120,9 +122,21 @@ public class Main {
         System.out.println("-----------------------------------");
     }
 
+    private void printRunningPrinters(List<Printer> printers) {
+        System.out.println("---------- Currently Running Printers ----------");
+        for(Printer p: printers) {
+            PrintTask printerCurrentTask= printingFacade.getCurrentTaskOfAPrinter(p);
+            if(printerCurrentTask != null) {
+                System.out.println("- " + p.getId() + ": " +p.getName() + " - " + printerCurrentTask);
+            }
+        }
+    }
+
     private void registerPrinterFailure() {
         //Print running printers
-        int numberOfRunningPrinters = printingFacade.printCurrentlyRunningPrinters();
+        List<Printer> runningPrinters = printingFacade.printCurrentlyRunningPrinters();
+        int numberOfRunningPrinters = runningPrinters.size();
+        printRunningPrinters(runningPrinters);
 
         System.out.print("- Printer ID that failed: ");
         int printerId = numberInput(1, numberOfRunningPrinters);

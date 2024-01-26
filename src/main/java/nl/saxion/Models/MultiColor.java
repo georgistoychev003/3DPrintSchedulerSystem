@@ -26,25 +26,28 @@ public class MultiColor extends StandardFDM {
 //    }
 
     public void setCurrentSpools(List<Spool> spools) {
-        boolean spoolChanged = false;
+
+        int changesCount = 0;
         if (this.getCurrentSpool() != spools.get(0)) {
             setCurrentSpool(spools.get(0));
-            spoolChanged = true;
+            changesCount++;
         }
         if (spools.size() > 1 && spool2 != spools.get(1)) {
             spool2 = spools.get(1);
-            spoolChanged = true;
+            changesCount++;
         }
         if (spools.size() > 2 && spool3 != spools.get(2)) {
             spool3 = spools.get(2);
-            spoolChanged = true;
+            changesCount++;
         }
         if (spools.size() > 3 && spool4 != spools.get(3)) {
             spool4 = spools.get(3);
-            spoolChanged = true;
+            changesCount++;
         }
-        if (spoolChanged) {
-            notifyObservers("spoolChange", spools); // Notify observers of the spool change
+        if (changesCount > 0) {
+            for (int i = 0; i < changesCount; i++) {
+                notifyObservers("spoolChange", spools); // Notify observers of the spool change
+            }
         }
     }
     //FIXME the value of spools is hardcoded-magic numbers

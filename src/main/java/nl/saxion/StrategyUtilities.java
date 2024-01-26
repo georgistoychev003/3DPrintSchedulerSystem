@@ -20,6 +20,14 @@ public abstract class StrategyUtilities {
                         chosenTask = getMultiColorPrintTask(printer, printTask, chosenSpools);
                     }
 
+                } else if (printer instanceof HousedMultiColorPrinter && printTask.getFilamentType() == FilamentType.ABS
+                    && printTask.getColors().size() <= ((HousedMultiColorPrinter) printer).getMaxColors()) {
+                    // FIXME: else if conditions different but else if body same as the above
+                    List<Spool> chosenSpools = getSpoolManager().getNeededSpools(printTask);
+                    // We assume that if they are the same length that there is a match.
+                    if (chosenSpools.size() == printTask.getColors().size()) {
+                        chosenTask = getMultiColorPrintTask(printer, printTask, chosenSpools);
+                    }
                 }
             }
         }
@@ -115,21 +123,27 @@ public abstract class StrategyUtilities {
 
     private PrintTask matchMultiColor(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
         if (printer instanceof MultiColor && printTask.getFilamentType() != FilamentType.ABS && printTask.getColors().size() <= ((MultiColor) printer).getMaxColors()) {
-            boolean printWorks = true;
-            for (int i = 0; i < spools.length && i < printTask.getColors().size(); i++) {
-                if (!spools[i].spoolMatch(printTask.getColors().get(i), printTask.getFilamentType())) {
-                    printWorks = false;
-                    break;
-                }
-            }
-            if (printWorks) {
-                getPrintTaskManager().addRunningPrintTask(printer,printTask);
-                getPrinterManager().removeFreePrinter(printer);
-                chosenTask = printTask;
-            }
-            return chosenTask;
+            return tryRunningMultiColorPrinter(printer, spools, printTask, chosenTask);
+        } else if (printer instanceof HousedMultiColorPrinter && printTask.getFilamentType() == FilamentType.ABS && printTask.getColors().size() == 4) {
+            return tryRunningMultiColorPrinter(printer, spools, printTask, chosenTask);
         }
         return null;
+    }
+
+    private PrintTask tryRunningMultiColorPrinter(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
+        boolean printWorks = true;
+        for (int i = 0; i < spools.length && i < printTask.getColors().size(); i++) {
+            if (!spools[i].spoolMatch(printTask.getColors().get(i), printTask.getFilamentType())) {
+                printWorks = false;
+                break;
+            }
+        }
+        if (printWorks) {
+            getPrintTaskManager().addRunningPrintTask(printer, printTask);
+            getPrinterManager().removeFreePrinter(printer);
+            chosenTask = printTask;
+        }
+        return chosenTask;
     }
 
     @Override

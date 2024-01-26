@@ -98,10 +98,12 @@ public class PrintTaskManager {
         pendingPrintTasks.add(task); // add the task back to the queue.
         runningPrintTasks.remove(foundEntry.getKey());
 
+
         System.out.println("Task " + task + " removed from printer "
                 + foundEntry.getKey().getName());
 
         Printer printer = foundEntry.getKey();
+        getPrinterManager().addFreePrinter(printer);
         Spool[] spools = printer.getCurrentSpools();
         for(int i=0; i<spools.length && i < task.getColors().size();i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
@@ -132,6 +134,7 @@ public class PrintTaskManager {
 
         // Removing the completed task
         runningPrintTasks.remove(printer);
+        getPrinterManager().addFreePrinter(printer);
 
         System.out.println("Task " + task + " removed from printer "
                 + foundEntry.getKey().getName());

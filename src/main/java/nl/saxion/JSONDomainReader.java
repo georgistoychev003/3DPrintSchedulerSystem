@@ -81,10 +81,13 @@ public class JSONDomainReader implements DomainReader {
             // Useing a ConcretePrinter instead of Printer as Printer is an abstract class
             if(maxColors == 1){
                 return new StandardFDM(id, name, manufacturer, maxX, maxY, maxZ);
-            }else{
+            }else if (maxColors == 4){
                 return new MultiColor(id, name, manufacturer, maxX, maxY, maxZ, maxColors);
+            } else if (maxColors == 6){
+                return new HousedMultiColorPrinter(id, name, manufacturer, maxX, maxY, maxZ, maxColors);
             }
 
+            return null;
         } catch (NullPointerException | ClassCastException e) {
             throw new PrinterDataException("Invalid printer data format: " + e.getMessage());
         }

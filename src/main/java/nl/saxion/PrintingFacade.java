@@ -1,8 +1,6 @@
 package nl.saxion;
 
 import nl.saxion.Models.*;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.*;
 
@@ -18,17 +16,9 @@ public class PrintingFacade implements IFacade{
     }
 
     @Override
-    public int printCurrentlyRunningPrinters() {
-        List<Printer> printers = getPrinterManager().getPrinters();
-        System.out.println("---------- Currently Running Printers ----------");
-        for(Printer p: printers) {
-            PrintTask printerCurrentTask= getPrintTaskManager().getPrinterCurrentTask(p);
-            if(printerCurrentTask != null) {
-                System.out.println("- " + p.getId() + ": " +p.getName() + " - " + printerCurrentTask);
-            }
-        }
-
-        return printers.size();
+    public List<Printer> printCurrentlyRunningPrinters() {
+        List<Printer> runningPrinters = getPrinters().stream().filter(p -> getCurrentTaskOfAPrinter(p) != null).toList();
+        return runningPrinters;
     }
 
     @Override
@@ -77,9 +67,7 @@ public class PrintingFacade implements IFacade{
     @Override
     public FilamentType getSelectedFilamentType(int filamentTypeNumber, List<FilamentType> filamentTypes) {
         if (filamentTypeNumber > filamentTypes.size() || filamentTypeNumber < 1){
-            // TODO: throw exception
-            System.out.println("Not a valid filament type.");
-            return null;
+            throw new IllegalArgumentException("Filament type does not exist");
         }
         return filamentTypes.get(filamentTypeNumber-1);
     }
@@ -131,7 +119,7 @@ public class PrintingFacade implements IFacade{
         List<Printer> printers = jsonFileHandler.readPrinters();
         for (Printer printer : printers) {
             getPrinterManager().addPrinter(printer);
-//            getPrinterManager().addFreePrinter(printer);
+            getPrinterManager().addFreePrinter(printer);
         }
     }
 

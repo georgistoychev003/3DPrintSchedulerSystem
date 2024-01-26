@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IFacade {
 
-    public int printCurrentlyRunningPrinters();
+    public List<Printer> printCurrentlyRunningPrinters();
     void startPrintQueue();
     void registerSucceededPrinter(int printerId);
     void registerFailedPrinter(int printerId);

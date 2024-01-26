@@ -20,7 +20,7 @@ public class OptimalSpoolUsageStrategy extends StrategyUtilities implements Prin
         while (counter < spoolList.size()) {
             List<PrintTask> matchingPrintTasks = new ArrayList<>();
             for (PrintTask printTask : getPrintTaskManager().getPendingPrintTasks()) {
-                if (printer.printFits(printTask.getPrint())){
+                if (printer.printFits(printTask.getPrint()) && getPrinterManager().getFreePrinters().contains(printer)){
                     if (isTaskMatchingStandardFDMPrinter(printer, printTask, spoolList.get(counter))){
                         matchingPrintTasks.add(printTask);
                     }
@@ -70,6 +70,7 @@ public class OptimalSpoolUsageStrategy extends StrategyUtilities implements Prin
     }
 
     private boolean isTaskMatchingMultiColorPrinter(Printer printer, PrintTask printTask, Spool spool) {
+        //FIXME: multicolor functionality not implemented / code bellow duplicated with isTaskMatchingHousedPrinter method
         if (printer instanceof StandardFDM && printTask.getFilamentType() == FilamentType.ABS && printTask.getColors().size() == 1) {
             if (spool.spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
                 return true;

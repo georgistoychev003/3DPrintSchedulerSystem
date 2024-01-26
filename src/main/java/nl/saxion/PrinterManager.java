@@ -49,6 +49,10 @@ public class PrinterManager {
         return printers;
     }
 
+    public List<Printer> getFreePrinters() {
+        return freePrinters;
+    }
+
     public void addPrinter(Printer printer){
         printers.add(printer);
     }
