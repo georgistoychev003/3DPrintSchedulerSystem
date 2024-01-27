@@ -49,7 +49,7 @@ public class PrintManager {
             return;
         }
 
-        List<Print> printsFromFile = fileHandler.readPrints();
+        List<Print> printsFromFile = fileHandler.readPrints(filename);
         for (Print print : printsFromFile) {
             addPrint(print);
         }

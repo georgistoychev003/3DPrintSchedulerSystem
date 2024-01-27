@@ -8,9 +8,9 @@ import nl.saxion.Models.Spool;
 import java.util.List;
 
 public interface DomainReader {
-    List<Printer> readPrinters();
-    List<Print> readPrints();
-    List<Spool> readSpools();
+    List<Printer> readPrinters(String filePath);
+    List<Print> readPrints(String filePath);
+    List<Spool> readSpools(String filePath);
     boolean supportsFileType(String filename);
 }
 

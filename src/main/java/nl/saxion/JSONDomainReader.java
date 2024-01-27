@@ -15,9 +15,7 @@ import java.util.List;
 public class JSONDomainReader implements DomainReader {
     private static JSONDomainReader instance;
     private JSONParser jsonParser = new JSONParser();
-    private String printersFilename = "src/main/resources/printers.json";
-    private String printsFilename = "src/main/resources/prints.json";
-    private String spoolsFilename = "src/main/resources/spools.json";
+
     private JSONDomainReader() {
     }
 
@@ -28,8 +26,8 @@ public class JSONDomainReader implements DomainReader {
         return instance;
     }
     @Override
-    public List<Printer> readPrinters() {
-        JSONArray printersJson = readJsonArrayFromFile(printersFilename);
+    public List<Printer> readPrinters(String filePath) {
+        JSONArray printersJson = readJsonArrayFromFile(filePath);
         List<Printer> printers = new ArrayList<>();
         for (Object p : printersJson) {
             JSONObject printerJson = (JSONObject) p;
@@ -43,8 +41,8 @@ public class JSONDomainReader implements DomainReader {
     }
 
     @Override
-    public List<Print> readPrints() {
-        JSONArray printsJson = readJsonArrayFromFile(printsFilename);
+    public List<Print> readPrints(String filePath) {
+        JSONArray printsJson = readJsonArrayFromFile(filePath);
         List<Print> prints = new ArrayList<>();
         for (Object p : printsJson) {
             JSONObject printJson = (JSONObject) p;
@@ -53,8 +51,8 @@ public class JSONDomainReader implements DomainReader {
         return prints;
     }
 
-    public List<Spool> readSpools() {
-        JSONArray spoolsJson = readJsonArrayFromFile(spoolsFilename);
+    public List<Spool> readSpools(String filePath) {
+        JSONArray spoolsJson = readJsonArrayFromFile(filePath);
         List<Spool> spools = new ArrayList<>();
         for (Object s : spoolsJson) {
             JSONObject spoolJson = (JSONObject) s;

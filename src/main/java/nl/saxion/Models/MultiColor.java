@@ -14,14 +14,14 @@ public class MultiColor extends StandardFDM {
 //    private Spool spool2;
 //    private Spool spool3;
 //    private Spool spool4;
-    private List<Spool> spools;
+    private Spool[] spools;
 
     private boolean isHoused;
 
     public MultiColor(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
         super(id, printerName, manufacturer, maxX, maxY, maxZ);
         this.maxColors = maxColors;
-        spools = new ArrayList<>(maxColors);
+        spools = new Spool[maxColors];
     }
 
 //    public void setCurrentSpools(List<Spool> spools) {
@@ -30,21 +30,35 @@ public class MultiColor extends StandardFDM {
 //        if(spools.size() > 2) spool3 = spools.get(2);
 //        if(spools.size() > 3) spool4 = spools.get(3);
 //    }
-
+    @Override
     public void setCurrentSpools(List<Spool> spools) {
         if (maxColors < spools.size()) {
             throw new IllegalArgumentException("Cannot exceed max colors of Multicolor printer");
         }
-        AtomicInteger counter = new AtomicInteger(0);
-        this.spools.forEach((spool) -> {
-            if (spool != spools.get(counter.get())) {
-                counter.incrementAndGet();
-                this.spools.set(counter.get(), spools.get(counter.get()));
-            }
-        });
+//        AtomicInteger counter = new AtomicInteger(0);
+//        this.spools.forEach((spool) -> {
+//            if (spool != spools.get(counter.get())) {
+//                this.spools.set(counter.get(), spools.get(counter.get()));
+//                counter.incrementAndGet();
+//            }
+//        });
 
-        if (counter.get() > 0) {
-            for (int i = 0; i < counter.get(); i++) {
+        int counter = 0;
+//        for (Spool spool : this.spools) {
+//            if (spool != spools.get(counter)) {
+//                this.spools.set(counter, spools.get(counter));
+//                counter++;
+//            }
+//        }
+        for (int i = 0; i < maxColors && i < spools.size(); i++) {
+            if (this.spools[i] != spools.get(i)) {
+                this.spools[i] = spools.get(i);
+                counter++;
+            }
+        }
+
+        if (counter > 0) {
+            for (int i = 0; i < counter; i++) {
                 notifyObservers("spoolChange", spools); // Notify observers of the spool change
             }
         }
@@ -53,7 +67,7 @@ public class MultiColor extends StandardFDM {
 
     @Override
     public Spool[] getCurrentSpools() {
-        return this.spools.toArray(new Spool[maxColors]);
+        return spools;
     }
 //Fixme is the toString too complex???
 
@@ -63,14 +77,17 @@ public class MultiColor extends StandardFDM {
         String[] resultArray = result.split("- ");
         String spoolsString = resultArray[resultArray.length - 1];
 
-        if (!spools.isEmpty()) {
+        if (spools.length != 0) {
             StringBuilder spoolIds = new StringBuilder();
-            for (Spool spool : spools) {
-                if (!spoolIds.isEmpty()) {
-                    spoolIds.append(", ");
+            for (int i = 0; i < spools.length; i++) {
+                if (spools[i] != null) {
+                    if (!spoolIds.isEmpty()) {
+                        spoolIds.append(", ");
+                    }
+                    spoolIds.append(spools[i].getId());
                 }
-                spoolIds.append(spool.getId());
             }
+
             spoolsString = spoolsString.replace("--------", "- spoolIds: " + spoolIds.toString() + System.lineSeparator() +
                     "--------");
             resultArray[resultArray.length - 1] = spoolsString;

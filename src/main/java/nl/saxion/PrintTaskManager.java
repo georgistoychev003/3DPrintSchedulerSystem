@@ -2,10 +2,7 @@ package nl.saxion;
 
 import nl.saxion.Models.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PrintTaskManager {
     private static PrintTaskManager instance;
@@ -147,8 +144,6 @@ public class PrintTaskManager {
             }
         }
         selectPrintTask(printer);
-
-
     }
 
     private void printError(String s) {

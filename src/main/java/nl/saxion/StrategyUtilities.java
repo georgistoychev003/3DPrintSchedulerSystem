@@ -34,7 +34,7 @@ public abstract class StrategyUtilities {
 
     public PrintTask matchCurrentSpoolWithPrintTask(Printer printer, Spool[] spools, PrintTask chosenTask) {
         for (PrintTask printTask : getPrintTaskManager().getPendingPrintTasks()) {
-            if (printer.printFits(printTask.getPrint())) {
+            if (printer.printFits(printTask.getPrint()) && getPrinterManager().getFreePrinters().contains(printer)) {
                 chosenTask = matchStandardFDM(printer, spools, printTask, chosenTask);
                 if (chosenTask != null) {
                     break;

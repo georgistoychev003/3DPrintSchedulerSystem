@@ -57,7 +57,7 @@ public class PrinterManager {
             return;
         }
 
-        List<Printer> printersFromFile = fileHandler.readPrinters();
+        List<Printer> printersFromFile = fileHandler.readPrinters(filename);
         for (Printer printer : printersFromFile) {
             addPrinter(printer);
         }

@@ -28,8 +28,10 @@ public class SpoolManager {
         List<Spool> chosenSpools = new ArrayList<>();
         for (int i = 0; i < printTask.getColors().size(); i++) {
             for (Spool spool : freeSpools) {
-                if (spool.spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) && !containsSpool(chosenSpools, printTask.getColors().get(i))) {
-                    chosenSpools.add(spool);
+                if (spool != null){
+                    if (spool.spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) && !containsSpool(chosenSpools, printTask.getColors().get(i))) {
+                        chosenSpools.add(spool);
+                    }
                 }
             }
         }
@@ -58,7 +60,7 @@ public class SpoolManager {
             return;
         }
 
-        List<Spool> spoolsFromFile = fileHandler.readSpools();
+        List<Spool> spoolsFromFile = fileHandler.readSpools(filename);
         for (Spool spool : spoolsFromFile) {
             addNewSpool(spool);
         }

@@ -9,7 +9,6 @@ import java.util.List;
 
 public class CSVDomainReader implements DomainReader {
     private static CSVDomainReader instance;
-    private String spoolsFilename = "src/main/resources/spools.csv";
 
     private CSVDomainReader() {
     }
@@ -21,13 +20,13 @@ public class CSVDomainReader implements DomainReader {
     }
 
     @Override
-    public List<Printer> readPrinters() {
+    public List<Printer> readPrinters(String filePath) {
         //we have no csv for the printers
         return new ArrayList<>();
     }
 
     @Override
-    public List<Print> readPrints() {
+    public List<Print> readPrints(String filePath) {
         //we have no csv for the prints
         return new ArrayList<>();
     }
@@ -38,9 +37,9 @@ public class CSVDomainReader implements DomainReader {
 
 
 
-    public List<Spool> readSpools() {
+    public List<Spool> readSpools(String filePath) {
         List<Spool> spools = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(spoolsFilename))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             // skip header
             br.readLine();
             String line;
