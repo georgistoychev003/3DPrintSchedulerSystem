@@ -114,8 +114,10 @@ public class Main {
         int numberOfRunningPrinters = runningPrinters.size();
         printRunningPrinters(runningPrinters);
 
+
+
         System.out.print("- Printer that is done (ID): ");
-        int printerId = numberInput(-1, numberOfRunningPrinters);
+        int printerId = numberInput(1, printingFacade.getPrinters().size());
 
         printingFacade.registerSucceededPrinter(printerId);
 
@@ -139,7 +141,7 @@ public class Main {
         printRunningPrinters(runningPrinters);
 
         System.out.print("- Printer ID that failed: ");
-        int printerId = numberInput(1, numberOfRunningPrinters);
+        int printerId = numberInput(1, printingFacade.getPrinters().size());
 
         printingFacade.registerFailedPrinter(printerId);
 

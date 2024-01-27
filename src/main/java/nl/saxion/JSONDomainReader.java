@@ -70,6 +70,7 @@ public class JSONDomainReader implements DomainReader {
     private Printer convertJsonToPrinter(JSONObject printerJson) throws PrinterDataException {
         try {
             int id = ((Long) printerJson.get("id")).intValue();
+            int type = ((Long) printerJson.get("type")).intValue();
             String name = (String) printerJson.get("name");
             String manufacturer = (String) printerJson.get("manufacturer");
             int maxX = ((Long) printerJson.get("maxX")).intValue();
@@ -77,13 +78,9 @@ public class JSONDomainReader implements DomainReader {
             int maxZ = ((Long) printerJson.get("maxZ")).intValue();
             int maxColors = ((Long) printerJson.get("maxColors")).intValue();
 
-            // Useing a ConcretePrinter instead of Printer as Printer is an abstract class
-            if(maxColors == 1){
-                return new StandardFDM(id, name, manufacturer, maxX, maxY, maxZ);
-            }else if (maxColors == 4){
-                return new MultiColor(id, name, manufacturer, maxX, maxY, maxZ, maxColors);
-            } else if (maxColors == 6){
-                return new HousedMultiColorPrinter(id, name, manufacturer, maxX, maxY, maxZ, maxColors);
+            Printer printer = PrinterFactory.createPrinterInstance(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
+            if (printer != null) {
+                return printer;
             }
 
             return null;

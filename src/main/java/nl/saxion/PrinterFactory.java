@@ -1,6 +1,5 @@
 package nl.saxion;
 
-import nl.saxion.Models.HousedMultiColorPrinter;
 import nl.saxion.Models.MultiColor;
 import nl.saxion.Models.Printer;
 import nl.saxion.Models.StandardFDM;
@@ -14,10 +13,12 @@ public class PrinterFactory {
                 printer.setHoused(true);
             }
             return printer;
-        } else if (printerType == 3) {
-            return new MultiColor(id, printerName, manufacturer, maxX, maxY, maxZ, maxColors);
-        } else if (printerType == 4) {
-            return new HousedMultiColorPrinter(id, printerName, manufacturer, maxX, maxY, maxZ, maxColors);
+        } else if (printerType == 3 || printerType == 4) {
+            MultiColor printer = new MultiColor(id, printerName, manufacturer, maxX, maxY, maxZ, maxColors);
+            if (printerType == 4) {
+                printer.setHoused(true);
+            }
+            return printer;
         }
 
         return null;

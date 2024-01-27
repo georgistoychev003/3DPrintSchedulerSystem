@@ -1,7 +1,9 @@
 package nl.saxion.Models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 //FIXME Uncommunicative name of the class as the naming conventions of the naming are not met
 
 /* Printer capable of printing multiple colors. */
@@ -9,13 +11,17 @@ public class MultiColor extends StandardFDM {
     private int maxColors;
     //Fixme isnt the absense of spool one confusing?????
 
-    private Spool spool2;
-    private Spool spool3;
-    private Spool spool4;
+//    private Spool spool2;
+//    private Spool spool3;
+//    private Spool spool4;
+    private List<Spool> spools;
+
+    private boolean isHoused;
 
     public MultiColor(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
         super(id, printerName, manufacturer, maxX, maxY, maxZ);
         this.maxColors = maxColors;
+        spools = new ArrayList<>(maxColors);
     }
 
 //    public void setCurrentSpools(List<Spool> spools) {
@@ -26,26 +32,19 @@ public class MultiColor extends StandardFDM {
 //    }
 
     public void setCurrentSpools(List<Spool> spools) {
+        if (maxColors < spools.size()) {
+            throw new IllegalArgumentException("Cannot exceed max colors of Multicolor printer");
+        }
+        AtomicInteger counter = new AtomicInteger(0);
+        this.spools.forEach((spool) -> {
+            if (spool != spools.get(counter.get())) {
+                counter.incrementAndGet();
+                this.spools.set(counter.get(), spools.get(counter.get()));
+            }
+        });
 
-        int changesCount = 0;
-        if (this.getCurrentSpool() != spools.get(0)) {
-            setCurrentSpool(spools.get(0));
-            changesCount++;
-        }
-        if (spools.size() > 1 && spool2 != spools.get(1)) {
-            spool2 = spools.get(1);
-            changesCount++;
-        }
-        if (spools.size() > 2 && spool3 != spools.get(2)) {
-            spool3 = spools.get(2);
-            changesCount++;
-        }
-        if (spools.size() > 3 && spool4 != spools.get(3)) {
-            spool4 = spools.get(3);
-            changesCount++;
-        }
-        if (changesCount > 0) {
-            for (int i = 0; i < changesCount; i++) {
+        if (counter.get() > 0) {
+            for (int i = 0; i < counter.get(); i++) {
                 notifyObservers("spoolChange", spools); // Notify observers of the spool change
             }
         }
@@ -54,12 +53,7 @@ public class MultiColor extends StandardFDM {
 
     @Override
     public Spool[] getCurrentSpools() {
-        Spool[] spools = new Spool[4];
-        spools[0] = getCurrentSpool();
-        spools[1] = spool2;
-        spools[2] = spool3;
-        spools[3] = spool4;
-        return spools;
+        return this.spools.toArray(new Spool[maxColors]);
     }
 //Fixme is the toString too complex???
 
@@ -67,22 +61,33 @@ public class MultiColor extends StandardFDM {
     public String toString() {
         String result = super.toString();
         String[] resultArray = result.split("- ");
-        String spools = resultArray[resultArray.length - 1];
-        if (spool2 != null) {
-            spools = spools.replace(System.lineSeparator(), ", " + spool2.getId() + System.lineSeparator());
+        String spoolsString = resultArray[resultArray.length - 1];
+
+        if (!spools.isEmpty()) {
+            StringBuilder spoolIds = new StringBuilder();
+            for (Spool spool : spools) {
+                if (!spoolIds.isEmpty()) {
+                    spoolIds.append(", ");
+                }
+                spoolIds.append(spool.getId());
+            }
+            spoolsString = spoolsString.replace("--------", "- spoolIds: " + spoolIds.toString() + System.lineSeparator() +
+                    "--------");
+            resultArray[resultArray.length - 1] = spoolsString;
+            result = String.join("- ", resultArray);
         }
-        if (spool3 != null) {
-            spools = spools.replace(System.lineSeparator(), ", " + spool3.getId() + System.lineSeparator());
-        }
-        if (spool4 != null) {
-            spools = spools.replace(System.lineSeparator(), ", " + spool4.getId() + System.lineSeparator());
-        }
-        spools = spools.replace("--------", "- maxColors: " + maxColors + System.lineSeparator() +
-                "--------");
-        resultArray[resultArray.length - 1] = spools;
-        result = String.join("- ", resultArray);
 
         return result;
+    }
+
+    @Override
+    public boolean isHoused() {
+        return isHoused;
+    }
+
+    @Override
+    public void setHoused(boolean housed) {
+        isHoused = housed;
     }
 
     public int getMaxColors() {
