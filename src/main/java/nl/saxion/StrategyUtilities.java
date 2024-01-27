@@ -7,17 +7,17 @@ import java.util.List;
 public abstract class StrategyUtilities {
 
     public PrintTask matchFreeSpoolsWithPrintTask(Printer printer, PrintTask chosenTask) {
-        for(PrintTask printTask: getPrintTaskManager().getPendingPrintTasks()) {
-            if(printer.printFits(printTask.getPrint()) && getPrintTaskManager().getPrinterCurrentTask(printer) == null) {
+        for (PrintTask printTask : getPrintTaskManager().getPendingPrintTasks()) {
+            if (printer.printFits(printTask.getPrint()) && getPrintTaskManager().getPrinterCurrentTask(printer) == null) {
 
                 if (printer instanceof StandardFDM && printTask.getColors().size() == 1) {
-                    if (printTask.getFilamentType().equals(FilamentType.ABS) && !((StandardFDM) printer).isHoused()){
+                    if (printTask.getFilamentType().equals(FilamentType.ABS) && !((StandardFDM) printer).isHoused()) {
                         break;
                     }
                     chosenTask = getStandardFDMPrintTask(printer, chosenTask, printTask);
 
                 } else if (printer instanceof MultiColor && printTask.getColors().size() <= ((MultiColor) printer).getMaxColors()) {
-                    if (printTask.getFilamentType().equals(FilamentType.ABS) && !((MultiColor) printer).isHoused()){
+                    if (printTask.getFilamentType().equals(FilamentType.ABS) && !((MultiColor) printer).isHoused()) {
                         break;
                     }
 
@@ -39,12 +39,6 @@ public abstract class StrategyUtilities {
                 if (chosenTask != null) {
                     break;
                 }
-
-                //TODO remove if correct
-//                chosenTask = matchHousedPrinter(printer, spools, printTask, chosenTask);
-//                if (chosenTask != null) {
-//                    break;
-//                }
 
                 chosenTask = matchMultiColor(printer, spools, printTask, chosenTask);
                 if (chosenTask != null) {
@@ -78,14 +72,14 @@ public abstract class StrategyUtilities {
     private PrintTask getStandardFDMPrintTask(Printer printer, PrintTask chosenTask, PrintTask printTask) {
         Spool chosenSpool = null;
         for (Spool spool : getSpoolManager().getFreeSpools()) {
-            if (spool != null){
+            if (spool != null) {
                 if (spool.spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
                     chosenSpool = spool;
                 }
             }
         }
         if (chosenSpool != null) {
-            getPrintTaskManager().addRunningPrintTask(printer,printTask);
+            getPrintTaskManager().addRunningPrintTask(printer, printTask);
             getSpoolManager().addFreeSpool(printer.getCurrentSpools()[0]);
             System.out.println("- Spool change: Please place spool " + chosenSpool.getId() + " in printer " + printer.getName());
             getSpoolManager().removeFreeSpool(chosenSpool);
@@ -99,12 +93,12 @@ public abstract class StrategyUtilities {
     private PrintTask matchStandardFDM(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
         if (printer instanceof StandardFDM && printTask.getColors().size() == 1) {
             // If printTask filament is abs and printer not housed return null
-            if (printTask.getFilamentType().equals(FilamentType.ABS) && !((StandardFDM) printer).isHoused()){
+            if (printTask.getFilamentType().equals(FilamentType.ABS) && !((StandardFDM) printer).isHoused()) {
                 return null;
             }
 
             if (spools[0].spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
-                getPrintTaskManager().addRunningPrintTask(printer,printTask);
+                getPrintTaskManager().addRunningPrintTask(printer, printTask);
                 getPrinterManager().removeFreePrinter(printer);
                 chosenTask = printTask;
             }
@@ -113,35 +107,16 @@ public abstract class StrategyUtilities {
         return null;
     }
 
-    //TODO remove if correct
-//    private PrintTask matchHousedPrinter(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
-//        if (printer instanceof StandardFDM && printTask.getFilamentType() == FilamentType.ABS && printTask.getColors().size() == 1) {
-//            if (spools[0].spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
-//                getPrintTaskManager().addRunningPrintTask(printer,printTask);
-//                getPrinterManager().removeFreePrinter(printer);
-//                chosenTask = printTask;
-//            }
-//            return chosenTask;
-//        }
-//        return null;
-//    }
-
     private PrintTask matchMultiColor(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
         if (printer instanceof MultiColor && printTask.getColors().size() <= ((MultiColor) printer).getMaxColors()) {
             return tryRunningMultiColorPrinter(printer, spools, printTask, chosenTask);
         }
-        //TODO : remove if working
-//        if (printer instanceof MultiColor && printTask.getFilamentType() != FilamentType.ABS && printTask.getColors().size() <= ((MultiColor) printer).getMaxColors()) {
-//            return tryRunningMultiColorPrinter(printer, spools, printTask, chosenTask);
-//        } else if (printer instanceof MultiColor && printTask.getFilamentType() == FilamentType.ABS && printTask.getColors().size() <= ((MultiColor) printer).getMaxColors()) {
-//            return tryRunningMultiColorPrinter(printer, spools, printTask, chosenTask);
-//        }
         return null;
     }
 
     private PrintTask tryRunningMultiColorPrinter(Printer printer, Spool[] spools, PrintTask printTask, PrintTask chosenTask) {
         // If printTask filament is abs and printer not housed return null
-        if (printTask.getFilamentType().equals(FilamentType.ABS) && !(((MultiColor)printer).isHoused())) {
+        if (printTask.getFilamentType().equals(FilamentType.ABS) && !(((MultiColor) printer).isHoused())) {
             return null;
         }
 
@@ -167,9 +142,11 @@ public abstract class StrategyUtilities {
     public PrintTaskManager getPrintTaskManager() {
         return PrintTaskManager.getInstance();
     }
+
     public PrinterManager getPrinterManager() {
         return PrinterManager.getInstance();
     }
+
     public SpoolManager getSpoolManager() {
         return SpoolManager.getInstance();
     }

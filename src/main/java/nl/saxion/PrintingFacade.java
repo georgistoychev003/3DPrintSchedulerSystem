@@ -4,7 +4,7 @@ import nl.saxion.Models.*;
 
 import java.util.*;
 
-public class PrintingFacade implements IFacade{
+public class PrintingFacade implements IFacade {
 
     public PrintingFacade() {
     }
@@ -41,7 +41,7 @@ public class PrintingFacade implements IFacade{
         Set<String> availableColors = new HashSet<>();
         for (Spool spool : spools) {
             String colorString = spool.getColor();
-            if(filamentType == spool.getFilamentType()) {
+            if (filamentType == spool.getFilamentType()) {
                 availableColors.add(colorString);
             }
         }
@@ -60,10 +60,10 @@ public class PrintingFacade implements IFacade{
 
     @Override
     public FilamentType getSelectedFilamentType(int filamentTypeNumber, List<FilamentType> filamentTypes) {
-        if (filamentTypeNumber > filamentTypes.size() || filamentTypeNumber < 1){
+        if (filamentTypeNumber > filamentTypes.size() || filamentTypeNumber < 1) {
             throw new IllegalArgumentException("Filament type does not exist");
         }
-        return filamentTypes.get(filamentTypeNumber-1);
+        return filamentTypes.get(filamentTypeNumber - 1);
     }
 
     public PrintingStrategy getPrintingStrategy() {
@@ -104,23 +104,20 @@ public class PrintingFacade implements IFacade{
         getPrintTaskManager().removePendingPrintTask(printTask);
     }
 
-//    public List<PrinterDTO> getPrinters() {
-//        return getPrinterManager().getPrinters().stream().map(p -> p.asDTO()).collect(Collectors.toList());
-//    }
-
     @Override
     public void readPrintersFromFile(String filename) {
         getPrinterManager().readPrintersFromFile(filename);
     }
+
     @Override
     public void readPrintsFromFile(String filename) {
         getPrintManager().readPrintsFromFile(filename);
     }
+
     @Override
     public void readSpoolsFromFile(String filename) {
         getSpoolManager().readSpoolsFromFile(filename);
     }
-
 
     public void initializeDashboardObserver() {
         getPrinterManager().initializeDashboard();
@@ -129,12 +126,15 @@ public class PrintingFacade implements IFacade{
     public void displayDashboardStats() {
         getPrinterManager().displayDashboardStats();
     }
+
     private PrinterManager getPrinterManager() {
         return PrinterManager.getInstance();
     }
+
     private PrintTaskManager getPrintTaskManager() {
         return PrintTaskManager.getInstance();
     }
+
     private PrintManager getPrintManager() {
         return PrintManager.getInstance();
     }

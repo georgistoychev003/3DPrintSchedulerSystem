@@ -20,7 +20,6 @@ public abstract class Printer {
         return id;
     }
 
-    public abstract int CalculatePrintTime(String filename);
 
     public abstract Spool[] getCurrentSpools();
 

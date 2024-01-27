@@ -9,11 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /* Printer capable of printing multiple colors. */
 public class MultiColor extends StandardFDM {
     private int maxColors;
-    //Fixme isnt the absense of spool one confusing?????
-
-//    private Spool spool2;
-//    private Spool spool3;
-//    private Spool spool4;
     private Spool[] spools;
 
     private boolean isHoused;
@@ -24,32 +19,14 @@ public class MultiColor extends StandardFDM {
         spools = new Spool[maxColors];
     }
 
-//    public void setCurrentSpools(List<Spool> spools) {
-//        setCurrentSpool(spools.get(0));
-//        if(spools.size() > 1) spool2 = spools.get(1);
-//        if(spools.size() > 2) spool3 = spools.get(2);
-//        if(spools.size() > 3) spool4 = spools.get(3);
-//    }
     @Override
     public void setCurrentSpools(List<Spool> spools) {
         if (maxColors < spools.size()) {
             throw new IllegalArgumentException("Cannot exceed max colors of Multicolor printer");
         }
-//        AtomicInteger counter = new AtomicInteger(0);
-//        this.spools.forEach((spool) -> {
-//            if (spool != spools.get(counter.get())) {
-//                this.spools.set(counter.get(), spools.get(counter.get()));
-//                counter.incrementAndGet();
-//            }
-//        });
+
 
         int counter = 0;
-//        for (Spool spool : this.spools) {
-//            if (spool != spools.get(counter)) {
-//                this.spools.set(counter, spools.get(counter));
-//                counter++;
-//            }
-//        }
         for (int i = 0; i < maxColors && i < spools.size(); i++) {
             if (this.spools[i] != spools.get(i)) {
                 this.spools[i] = spools.get(i);
@@ -63,13 +40,11 @@ public class MultiColor extends StandardFDM {
             }
         }
     }
-    //FIXME the value of spools is hardcoded-magic numbers
 
     @Override
     public Spool[] getCurrentSpools() {
         return spools;
     }
-//Fixme is the toString too complex???
 
     @Override
     public String toString() {

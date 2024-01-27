@@ -21,7 +21,6 @@ public class Main {
     Scanner scanner = new Scanner(System.in);
     private PrintingFacade printingFacade = new PrintingFacade();
 
-
     public static void main(String[] args) {
         new Main().run(args);
     }
@@ -44,28 +43,21 @@ public class Main {
             menu();
             choice = menuChoice(10);
             System.out.println("-----------------------------------");
-            if (choice == 1) {
-                addNewPrintTask();
-            } else if (choice == 2) {
-                registerPrintCompletion();
-            } else if (choice == 3) {
-                registerPrinterFailure();
-            } else if (choice == 4) {
-                changePrintStrategy();
-            } else if (choice == 5) {
-                System.out.println("---------- Starting Print Queue ----------");
-                printingFacade.startPrintQueue();
-                System.out.println("-----------------------------------");
-            } else if (choice == 6) {
-                showPrints();
-            } else if (choice == 7) {
-                showPrinters();
-            } else if (choice == 8) {
-                showSpools();
-            } else if (choice == 9) {
-                showPendingPrintTasks();
-            } else if (choice == 10) {
-                showDashboardStats();
+            switch (choice) {
+                case 1 -> addNewPrintTask();
+                case 2 -> registerPrintCompletion();
+                case 3 -> registerPrinterFailure();
+                case 4 -> changePrintStrategy();
+                case 5 -> {
+                    System.out.println("---------- Starting Print Queue ----------");
+                    printingFacade.startPrintQueue();
+                    System.out.println("-----------------------------------");
+                }
+                case 6 -> showPrints();
+                case 7 -> showPrinters();
+                case 8 -> showSpools();
+                case 9 -> showPendingPrintTasks();
+                case 10 -> showDashboardStats();
             }
         }
         exit();
@@ -107,7 +99,6 @@ public class Main {
         System.out.println("-----------------------------------");
     }
 
-    // TODO: This should be based on which printer is finished printing.
     private void registerPrintCompletion() {
         //Print running printers
         List<Printer> runningPrinters = printingFacade.printCurrentlyRunningPrinters();
@@ -167,9 +158,8 @@ public class Main {
         System.out.println("----------------------------");
     }
 
-    //TODO: decide if these methods should also return the array from the facade or we have to call the facade everytime we need them
     public void showPrints() {
-        var prints = printingFacade.getPrints();
+        List<Print> prints = printingFacade.getPrints();
         System.out.println("---------- Available prints ----------");
         for (Print p : prints) {
             System.out.println(p);
@@ -270,9 +260,6 @@ public class Main {
     private void showDashboardStats() {
         printingFacade.displayDashboardStats();
     }
-
-
-    //todo : move all reads to their own classes (single - responsibility principle)
 
     public int menuChoice(int max) {
         int choice = -1;

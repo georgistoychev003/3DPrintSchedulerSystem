@@ -9,7 +9,7 @@ import java.util.List;
 public class SpoolManager {
 
     private static SpoolManager instance;
-    private List<Spool> spools = new ArrayList<Spool>(); //TODO use interface
+    private List<Spool> spools = new ArrayList<Spool>();
     private List<Spool> freeSpools = new ArrayList<>();
 
 
@@ -18,7 +18,7 @@ public class SpoolManager {
     }
 
     public static SpoolManager getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new SpoolManager();
         }
         return instance;
@@ -28,7 +28,7 @@ public class SpoolManager {
         List<Spool> chosenSpools = new ArrayList<>();
         for (int i = 0; i < printTask.getColors().size(); i++) {
             for (Spool spool : freeSpools) {
-                if (spool != null){
+                if (spool != null) {
                     if (spool.spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) && !containsSpool(chosenSpools, printTask.getColors().get(i))) {
                         chosenSpools.add(spool);
                     }
@@ -38,10 +38,8 @@ public class SpoolManager {
         return chosenSpools;
     }
 
-    // FIXME: code smell??? /// naming can be more meaningful as we search the spool from the color and not a name variable that does not exist in the spool class, also list could be replaced with spools
-    // FIXME: code smell // final inside method args?
-    public boolean containsSpool(final List<Spool> list, final String name){
-        return list.stream().anyMatch(o -> o.getColor().equals(name));
+    public boolean containsSpool(final List<Spool> list, final String color) {
+        return list.stream().anyMatch(o -> o.getColor().equals(color));
     }
 
     public void readSpoolsFromFile(String filename) {
@@ -79,19 +77,19 @@ public class SpoolManager {
         freeSpools.add(spool);
     }
 
-    public void addSpool(Spool spool){
+    public void addSpool(Spool spool) {
         spools.add(spool);
     }
 
-    public void addFreeSpool(Spool spool){
+    public void addFreeSpool(Spool spool) {
         freeSpools.add(spool);
     }
 
-    public void removeFreeSpool(Spool spool){
+    public void removeFreeSpool(Spool spool) {
         freeSpools.remove(spool);
     }
 
-    public void removeSpool(Spool spool){
+    public void removeSpool(Spool spool) {
         spools.remove(spool);
     }
 
@@ -105,8 +103,8 @@ public class SpoolManager {
 
     //FIXME: code smell // dead code
     public Spool getSpoolByID(int id) {
-        for(Spool s: spools) {
-            if(s.getId() == id) {
+        for (Spool s : spools) {
+            if (s.getId() == id) {
                 return s;
             }
         }

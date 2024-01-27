@@ -19,7 +19,6 @@ public class StandardFDM extends Printer {
         isHoused = false;
     }
 
-    // FIXME: how does it set all of them???
     public void setCurrentSpools(List<Spool> spools) {
         this.currentSpool = spools.get(0);
     }
@@ -47,7 +46,6 @@ public class StandardFDM extends Printer {
         return currentSpool;
     }
 
-    // FIXME: ????
     public Spool[] getCurrentSpools() {
         Spool[] spools = new Spool[1];
         if(currentSpool != null) {
@@ -59,12 +57,6 @@ public class StandardFDM extends Printer {
     @Override
     public boolean printFits(Print print) {
         return print.getHeight() <= maxZ && print.getWidth() <= maxX && print.getLength() <= maxY;
-    }
-
-    //FIXME: name wrong / not implemented
-    @Override
-    public int CalculatePrintTime(String filename) {
-        return 0;
     }
 
     @Override

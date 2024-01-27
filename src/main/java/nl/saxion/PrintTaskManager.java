@@ -11,40 +11,40 @@ public class PrintTaskManager {
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
     private PrintingStrategy printingStrategy = new LessSpoolChangesStrategy();
 
-    private PrintTaskManager() {}
+    private PrintTaskManager() {
+    }
 
     public void selectPrintTask(Printer printer) {
         printingStrategy.selectPrintTask(printer);
     }
 
-    public void changePrintingStrategy(PrintingStrategy printingStrategy){
+    public void changePrintingStrategy(PrintingStrategy printingStrategy) {
         this.printingStrategy = printingStrategy;
     }
 
     public static PrintTaskManager getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new PrintTaskManager();
         }
         return instance;
     }
-    //FIXME: code smell??? // can be replaced with stream
 
     public void startInitialQueue() {
-        for(Printer printer: getPrinterManager().getPrinters()) {
+        for (Printer printer : getPrinterManager().getPrinters()) {
             selectPrintTask(printer);
         }
     }
 
-    // FIXME: code smell // method has too much functionality it should be reduced to smaller parts and also simplified / there is also a lot of code repetition going on
-    //TODO: check if get return null if not found which means a code smell the if statement can be avoided
     public PrintTask getPrinterCurrentTask(Printer printer) {
-        if(!runningPrintTasks.containsKey(printer)) {
+        if (!runningPrintTasks.containsKey(printer)) {
             return null;
         }
         return runningPrintTasks.get(printer);
     }
 
-    public List<PrintTask> getPendingPrintTasks() {return pendingPrintTasks; }
+    public List<PrintTask> getPendingPrintTasks() {
+        return pendingPrintTasks;
+    }
 
     public void addPrintTask(String printName, List<String> colors, FilamentType type) {
         Print print = getPrintManager().findPrint(printName);
@@ -52,8 +52,7 @@ public class PrintTaskManager {
             printError("Could not find print with name " + printName);
             return;
         }
-        //FIXME: code smell??? / Can be replaced with .isEmpty()
-        if (colors.size() == 0) {
+        if (colors.isEmpty()) {
             printError("Need at least one color, but none given");
             return;
         }
@@ -66,7 +65,7 @@ public class PrintTaskManager {
                 }
             }
             if (!found) {
-                printError("Color " + color + " (" + type +") not found");
+                printError("Color " + color + " (" + type + ") not found");
                 return;
             }
         }
@@ -78,7 +77,6 @@ public class PrintTaskManager {
     }
 
 
-    //TODO: analyze this method as it looks too complicated
     public void registerPrinterFailure(int printerId) {
         Map.Entry<Printer, PrintTask> foundEntry = null;
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
@@ -102,13 +100,14 @@ public class PrintTaskManager {
         Printer printer = foundEntry.getKey();
         getPrinterManager().addFreePrinter(printer);
         Spool[] spools = printer.getCurrentSpools();
-        for(int i=0; i<spools.length && i < task.getColors().size();i++) {
+        for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
         }
         selectPrintTask(printer);
     }
+
     //FIXME: code smell // code repetition with the above method
-    //FIXME : code smell // name not concrete
+    //FIXME : code smell // name not descriptive
     public void registerCompletion(int printerId) {
         Map.Entry<Printer, PrintTask> foundEntry = null;
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
@@ -121,8 +120,7 @@ public class PrintTaskManager {
             printError("cannot find a running task on printer with ID " + printerId);
             return;
         }
-//        PrintTask task = foundEntry.getValue();
-//        runningPrintTasks.remove(foundEntry.getKey());
+
         Printer printer = foundEntry.getKey();
         PrintTask task = foundEntry.getValue();
 
@@ -136,7 +134,7 @@ public class PrintTaskManager {
         System.out.println("Task " + task + " removed from printer "
                 + foundEntry.getKey().getName());
 
-//        Printer printer = foundEntry.getKey();
+
         Spool[] spools = printer.getCurrentSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
             if (spools[i] != null) {
@@ -148,14 +146,15 @@ public class PrintTaskManager {
 
     private void printError(String s) {
         System.out.println("---------- Error Message ----------");
-        System.out.println("Error: "+s);
+        System.out.println("Error: " + s);
         System.out.println("--------------------------------------");
     }
 
 
-    public void addRunningPrintTask(Printer printer, PrintTask printTask){
+    public void addRunningPrintTask(Printer printer, PrintTask printTask) {
         runningPrintTasks.put(printer, printTask);
     }
+
     public void removePendingPrintTask(PrintTask printTask) {
         pendingPrintTasks.remove(printTask);
     }
@@ -167,6 +166,7 @@ public class PrintTaskManager {
     private PrinterManager getPrinterManager() {
         return PrinterManager.getInstance();
     }
+
     private PrintManager getPrintManager() {
         return PrintManager.getInstance();
     }

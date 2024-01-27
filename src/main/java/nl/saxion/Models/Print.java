@@ -8,8 +8,6 @@ public class Print {
     private int height;
     private int width;
     private int length;
-    //FIXME: Initialize as List(instead of ArrayList) for more flexibility- solution sparwl
-
     private List<Double> filamentLength;
     private int printTime;
 
@@ -21,7 +19,7 @@ public class Print {
         this.filamentLength = filamentLength;
         this.printTime = printTime;
     }
-    //Fixme ??? is the lineseparator a good use case
+
     @Override
     public String toString() {
         return "--------" + System.lineSeparator() +
@@ -33,13 +31,12 @@ public class Print {
                 "- Print Time: " + printTime + System.lineSeparator() +
                 "--------";
     }
-    //Fixme those methods are never used so remove them- dead code
+
     public String getName() {
         return name;
     }
 
-    //Fixme it returns a double when in reality it is initialized as a integer
-    public double getLength() {
+    public int getLength() {
         return length;
     }
 

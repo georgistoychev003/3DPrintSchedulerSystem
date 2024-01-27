@@ -10,10 +10,10 @@ import java.util.List;
 public class OptimalSpoolUsageStrategy extends StrategyUtilities implements PrintingStrategy{
     @Override
     public void selectPrintTask(Printer printer) {
-//        Spool[] spools = printer.getCurrentSpools();
         Spool[] spools = getSpoolManager().getFreeSpools().toArray(new Spool[0]);
-        List<Spool> spoolList = Arrays.stream(spools).sorted(Comparator.comparingDouble(Spool::getLength)).toList();
-//        spoolList.forEach(System.out::println);
+        List<Spool> spoolList = Arrays.stream(spools)
+                .sorted(Comparator.comparingDouble(spool -> spool == null ? Double.MAX_VALUE : spool.getLength()))
+                .toList();
         PrintTask chosenTask = null;
 
         int counter = 0;

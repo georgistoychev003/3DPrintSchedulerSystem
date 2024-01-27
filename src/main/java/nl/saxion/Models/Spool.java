@@ -20,17 +20,12 @@ public class Spool {
         return this.id;
     }
 
-    //Fixme this method is never used so remove them- dead code
     public double getLength() {
         return length;
     }
 
-    //fixme is this bad and should this be done simpler , does this make it a code smell
     public boolean spoolMatch(String color, FilamentType type) {
-        if(color.equals(this.color) && type == this.getFilamentType()) {
-            return true;
-        }
-        return false;
+        return color.equals(this.color) && type == this.getFilamentType();
     }
     /**
      * This method will try to reduce the length of the spool.

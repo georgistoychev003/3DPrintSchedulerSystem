@@ -19,9 +19,9 @@ public class PrintingTests {
     @BeforeEach
     public void createPrintingFacade() {
         printingFacade = new PrintingFacade();
-        printingFacade.readPrintsFromFile("resources/prints.json");
-        printingFacade.readSpoolsFromFile("resources/spools.csv");
-        printingFacade.readPrintersFromFile("resources/printers.json");
+        printingFacade.readPrintsFromFile("src/main/resources/prints.json");
+        printingFacade.readSpoolsFromFile("src/main/resources/spools.csv");
+        printingFacade.readPrintersFromFile("src/main/resources/printers.json");
     }
 
     public void selectFirstPrintingStrategy() {
