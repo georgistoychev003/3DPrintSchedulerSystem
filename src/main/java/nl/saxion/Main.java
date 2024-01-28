@@ -167,6 +167,18 @@ public class Main {
         System.out.println("--------------------------------------");
     }
 
+    public void showPrintsNames() {
+        List<Print> prints = printingFacade.getPrints();
+        System.out.println("---------- Available prints ----------");
+        System.out.println("(You can view details of prints with option 6 in the main menu)");
+        int counter = 1;
+        for (Print p : prints) {
+            System.out.println(counter + ": " + p.getName());
+            counter++;
+        }
+        System.out.println("--------------------------------------");
+    }
+
     public void showSpools() {
         List<Spool> spools = printingFacade.getSpools();
         System.out.println("---------- Spools ----------");
@@ -226,7 +238,7 @@ public class Main {
 
     private Print selectPrint() {
         List<Print> prints = printingFacade.getPrints();
-        showPrints();
+        showPrintsNames();
         System.out.print("- Print number: ");
         int printNumber = numberInput(1, prints.size());
         System.out.println("--------------------------------------");

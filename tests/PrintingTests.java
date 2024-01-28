@@ -1,7 +1,5 @@
-import nl.saxion.LessSpoolChangesStrategy;
+import nl.saxion.*;
 import nl.saxion.Models.*;
-import nl.saxion.OptimalSpoolUsageStrategy;
-import nl.saxion.PrintingFacade;
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -122,10 +120,10 @@ public class PrintingTests {
 
         printingFacade.startPrintQueue();
         assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(0)));
-        assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(1)));
+        assertNotNull(printingFacade.getCurrentTaskOfAPrinter(printingFacade.getPrinters().get(5)));
 
         printingFacade.registerSucceededPrinter(1);
-        printingFacade.registerSucceededPrinter(2);
+        printingFacade.registerSucceededPrinter(6);
     }
 
     @Test

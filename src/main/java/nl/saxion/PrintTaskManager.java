@@ -89,15 +89,19 @@ public class PrintTaskManager {
             printError("cannot find a running task on printer with ID " + printerId);
             return;
         }
+        Printer printer = foundEntry.getKey();
         PrintTask task = foundEntry.getValue();
         pendingPrintTasks.add(task); // add the task back to the queue.
         runningPrintTasks.remove(foundEntry.getKey());
 
+        // We free the printer if we are using the second strategy
+        if (getPrintingStrategy().toString().equals("Optimal Spool Usage Strategy")) {
+            getSpoolManager().addFreeSpool(printer.getCurrentSpools()[0]);
+        }
 
         System.out.println("Task " + task + " removed from printer "
                 + foundEntry.getKey().getName());
 
-        Printer printer = foundEntry.getKey();
         getPrinterManager().addFreePrinter(printer);
         Spool[] spools = printer.getCurrentSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
@@ -130,6 +134,11 @@ public class PrintTaskManager {
         // Removing the completed task
         runningPrintTasks.remove(printer);
         getPrinterManager().addFreePrinter(printer);
+
+        // We free the printer if we are using the second strategy
+        if (getPrintingStrategy().toString().equals("Optimal Spool Usage Strategy")) {
+            getSpoolManager().addFreeSpool(printer.getCurrentSpools()[0]);
+        }
 
         System.out.println("Task " + task + " removed from printer "
                 + foundEntry.getKey().getName());
