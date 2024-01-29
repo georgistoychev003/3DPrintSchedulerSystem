@@ -1,5 +1,7 @@
 package nl.saxion.Models;
 
+import nl.saxion.observer.Observer;
+
 import java.util.ArrayList;
 import java.util.List;
 

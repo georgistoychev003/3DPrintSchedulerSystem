@@ -1,21 +1,11 @@
 package nl.saxion;
 
 import nl.saxion.Models.*;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import nl.saxion.facade.PrintingFacade;
+import nl.saxion.strategy.LessSpoolChangesStrategy;
+import nl.saxion.strategy.OptimalSpoolUsageStrategy;
 
-import javax.print.DocFlavor;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);

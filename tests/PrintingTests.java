@@ -1,6 +1,7 @@
-import nl.saxion.*;
 import nl.saxion.Models.*;
-import org.junit.jupiter.api.Assertions.*;
+import nl.saxion.facade.PrintingFacade;
+import nl.saxion.strategy.LessSpoolChangesStrategy;
+import nl.saxion.strategy.OptimalSpoolUsageStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;

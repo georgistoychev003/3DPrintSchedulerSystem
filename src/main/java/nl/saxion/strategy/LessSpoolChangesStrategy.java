@@ -1,9 +1,6 @@
-package nl.saxion;
+package nl.saxion.strategy;
 
 import nl.saxion.Models.*;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class LessSpoolChangesStrategy extends StrategyUtilities implements PrintingStrategy {
 

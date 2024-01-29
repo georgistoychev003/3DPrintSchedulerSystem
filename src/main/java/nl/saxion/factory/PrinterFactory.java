@@ -1,4 +1,4 @@
-package nl.saxion;
+package nl.saxion.factory;
 
 import nl.saxion.Models.MultiColor;
 import nl.saxion.Models.Printer;

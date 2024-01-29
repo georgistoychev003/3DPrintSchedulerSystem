@@ -1,8 +1,11 @@
-package nl.saxion;
+package nl.saxion.managers;
 
 import nl.saxion.Models.*;
-import nl.saxion.Models.Observer;
-import org.json.simple.JSONArray;
+import nl.saxion.adapter.CSVDomainReader;
+import nl.saxion.adapter.DomainReader;
+import nl.saxion.adapter.JSONDomainReader;
+import nl.saxion.factory.PrinterFactory;
+import nl.saxion.observer.Dashboard;
 
 import java.util.*;
 

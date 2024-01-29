@@ -1,4 +1,4 @@
-package nl.saxion;
+package nl.saxion.adapter;
 
 
 import nl.saxion.Models.Print;

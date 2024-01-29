@@ -1,4 +1,4 @@
-package nl.saxion;
+package nl.saxion.adapter;
 
 import nl.saxion.Models.*;
 import java.io.BufferedReader;
@@ -35,8 +35,7 @@ public class CSVDomainReader implements DomainReader {
         return filename.endsWith(".csv");
     }
 
-
-
+    @Override
     public List<Spool> readSpools(String filePath) {
         List<Spool> spools = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {

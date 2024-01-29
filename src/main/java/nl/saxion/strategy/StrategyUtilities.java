@@ -1,6 +1,9 @@
-package nl.saxion;
+package nl.saxion.strategy;
 
 import nl.saxion.Models.*;
+import nl.saxion.managers.PrintTaskManager;
+import nl.saxion.managers.PrinterManager;
+import nl.saxion.managers.SpoolManager;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package nl.saxion;
+package nl.saxion.facade;
 
 import nl.saxion.Models.*;
 

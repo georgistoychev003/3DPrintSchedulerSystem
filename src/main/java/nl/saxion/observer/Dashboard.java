@@ -1,4 +1,6 @@
-package nl.saxion.Models;
+package nl.saxion.observer;
+
+import nl.saxion.observer.Observer;
 
 public class Dashboard implements Observer {
     private int totalSpoolChanges = 0;

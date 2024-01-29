@@ -1,6 +1,8 @@
-package nl.saxion;
+package nl.saxion.managers;
 
 import nl.saxion.Models.*;
+import nl.saxion.strategy.LessSpoolChangesStrategy;
+import nl.saxion.strategy.PrintingStrategy;
 
 import java.util.*;
 

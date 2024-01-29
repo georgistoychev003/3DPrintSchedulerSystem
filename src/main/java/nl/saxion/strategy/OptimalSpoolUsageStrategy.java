@@ -1,4 +1,4 @@
-package nl.saxion;
+package nl.saxion.strategy;
 
 import nl.saxion.Models.*;
 

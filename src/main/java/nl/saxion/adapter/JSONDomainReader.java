@@ -1,13 +1,15 @@
-package nl.saxion;
+package nl.saxion.adapter;
 
 
 import nl.saxion.Models.*;
+import nl.saxion.Models.exceptions.InvalidFilamentTypeException;
+import nl.saxion.Models.exceptions.PrinterDataException;
+import nl.saxion.factory.PrinterFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

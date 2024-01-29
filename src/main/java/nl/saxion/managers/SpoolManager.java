@@ -1,7 +1,10 @@
-package nl.saxion;
+package nl.saxion.managers;
 
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.adapter.CSVDomainReader;
+import nl.saxion.adapter.DomainReader;
+import nl.saxion.adapter.JSONDomainReader;
 
 import java.util.ArrayList;
 import java.util.List;
