@@ -71,5 +71,12 @@
     "height": 23,
     "filamentLength": [1.86, 0.73],
     "printTime": 62
+  },{
+  "name": "Rubber Duck",
+  "width": 47,
+  "length": 60,
+  "height": 63,
+  "filamentLength": [7.19, 0.97, 0.18, 0.02, 2.05, 1.25],
+  "printTime": 237
   }
 ]

@@ -18,17 +18,6 @@ public abstract class Printer {
         this.manufacturer = manufacturer;
     }
 
-    public int getId() {
-        return id;
-    }
-
-
-    public abstract Spool[] getCurrentSpools();
-
-    public abstract void setCurrentSpools(List<Spool> spools);
-
-    public abstract boolean printFits(Print print);
-
     public void registerObserver(Observer observer) {
         observers.add(observer);
     }
@@ -42,6 +31,18 @@ public abstract class Printer {
             observer.update(eventType, data);
         }
     }
+
+    public int getId() {
+        return id;
+    }
+
+
+    public abstract Spool[] getCurrentSpools();
+
+    public abstract void setCurrentSpools(List<Spool> spools);
+
+    public abstract boolean printFits(Print print);
+
     public void onPrintComplete() {
         notifyObservers("printComplete", null);
     }
